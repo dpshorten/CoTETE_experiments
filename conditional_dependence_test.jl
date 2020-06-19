@@ -5,9 +5,9 @@ using Distances: Cityblock, Chebyshev
 
 include("../CoTETE.jl/CoTETE.jl")
 
-l_y = 1
-l_x = 1
-l_z = 1
+d_y = 1
+d_x = 1
+d_c = 1
 K = 10
 
 REPEATS = 10
@@ -56,12 +56,12 @@ h5open(string("run_outputs/conditional_independence_continuous2.h5"), "w") do fi
                                         target_events = daughter_events_2
                                 end
 
-                                TE = CoTETE.do_preprocessing_anl_zalculate_TE(
+                                TE = CoTETE.do_preprocessing_and_calculate_TE(
                                         target_events,
                                         source_events,
-                                        l_x,
-                                        l_y,
-                                        l_z = l_z,
+                                        d_x,
+                                        d_y,
+                                        d_c = d_c,
                                         conditioning_events = conditioning_events,
                                         num_target_events = TARGET_TRAIN_LENGTH,
                                         num_samples = NUM_SAMPLES_RATIO * TARGET_TRAIN_LENGTH,
@@ -73,12 +73,12 @@ h5open(string("run_outputs/conditional_independence_continuous2.h5"), "w") do fi
 
                                 Threads.@threads for j = 1:NUM_SURROGATES
                                 #for j = 1:NUM_SURROGATES
-                                        TE_surrogate = CoTETE.do_preprocessing_anl_zalculate_TE(
+                                        TE_surrogate = CoTETE.do_preprocessing_and_calculate_TE(
                                                 target_events,
                                                 source_events,
-                                                l_x,
-                                                l_y,
-                                                l_z = l_z,
+                                                d_x,
+                                                d_y,
+                                                d_c = d_c,
                                                 conditioning_events = conditioning_events,
                                                 num_target_events = TARGET_TRAIN_LENGTH,
                                                 num_samples = NUM_SAMPLES_RATIO * TARGET_TRAIN_LENGTH,

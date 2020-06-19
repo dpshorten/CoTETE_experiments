@@ -4,9 +4,9 @@ using Distances: Cityblock, Chebyshev, Euclidean
 
 include("../CoTETE.jl/src/CoTETE.jl")
 
-l_y = 1
-l_x = 1
-l_z = 1
+d_y = 1
+d_x = 1
+d_c = 1
 K = 10
 
 REPEATS = 200
@@ -56,12 +56,12 @@ h5open(string("run_outputs/bias_at_shifts_test-small5.h5"), "w") do file
         #for i = 1:size(shifts, 1)
             shifted_source_events = source_events .+ shifts[i]
             clamp!(shifted_source_events, 0, 1e6)
-            TE = CoTETE.do_preprocessing_anl_zalculate_TE(
+            TE = CoTETE.do_preprocessing_and_calculate_TE(
                 target_events,
                 shifted_source_events,
-                l_x,
-                l_y,
-                l_z = l_z,
+                d_x,
+                d_y,
+                d_c = d_c,
                 conditioning_events = conditioning_events,
                 num_target_events = TARGET_TRAIN_LENGTH,
                 num_samples = NUM_SAMPLES_RATIO * TARGET_TRAIN_LENGTH,
@@ -71,12 +71,12 @@ h5open(string("run_outputs/bias_at_shifts_test-small5.h5"), "w") do file
             )
             TE_vals[repeat, i] = TE
 
-            TE_surrogate = CoTETE.do_preprocessing_anl_zalculate_TE(
+            TE_surrogate = CoTETE.do_preprocessing_and_calculate_TE(
                 target_events,
                 shifted_source_events,
-                l_x,
-                l_y,
-                l_z = l_z,
+                d_x,
+                d_y,
+                d_c = d_c,
                 conditioning_events = conditioning_events,
                 num_target_events = TARGET_TRAIN_LENGTH,
                 num_samples = NUM_SAMPLES_RATIO * TARGET_TRAIN_LENGTH,
@@ -90,12 +90,12 @@ h5open(string("run_outputs/bias_at_shifts_test-small5.h5"), "w") do file
             TE_vals_surrogate[repeat, i] = TE_surrogate
 
             shifted_shifted_source_events = shifted_source_events .+ BIG_SHIFT_MULTIPLIER * (BIG_SHIFT_BASE + rand())
-            TE_shift_surrogate = CoTETE.do_preprocessing_anl_zalculate_TE(
+            TE_shift_surrogate = CoTETE.do_preprocessing_and_calculate_TE(
                 target_events,
                 shifted_shifted_source_events,
-                l_x,
-                l_y,
-                l_z = l_z,
+                d_x,
+                d_y,
+                d_c = d_c,
                 conditioning_events = conditioning_events,
                 num_target_events = TARGET_TRAIN_LENGTH,
                 num_samples = NUM_SAMPLES_RATIO * TARGET_TRAIN_LENGTH,

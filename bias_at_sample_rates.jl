@@ -4,8 +4,8 @@ using Distances: Cityblock, Chebyshev, Euclidean
 
 include("../CoTETE.jl/CoTETE.jl")
 
-l_y = 1
-l_x = 1
+d_y = 1
+d_x = 1
 K = [4, 10]
 
 MU = [0.5, 1, 2, 5]
@@ -30,11 +30,11 @@ h5open(string("run_outputs/bias_at_samples_", ".h5"), "w") do file
             for i = 1:length(TARGET_TRAIN_LENGTHS)
                 Threads.@threads for j = 1:REPETITIONS_PER_LENGTH[i]
 
-                    TE = CoTETE.do_preprocessing_anl_zalculate_TE(
+                    TE = CoTETE.do_preprocessing_and_calculate_TE(
                         target_events,
                         source_events,
-                        l_x,
-                        l_y,
+                        d_x,
+                        d_y,
                         num_target_events = TARGET_TRAIN_LENGTHS[i],
                         num_samples =  Int(mu * TARGET_TRAIN_LENGTHS[i]),
                         k = k,
