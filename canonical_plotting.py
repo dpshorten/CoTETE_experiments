@@ -24,7 +24,7 @@ data_file = h5py.File("run_outputs/canonical_weeee.h5", "r")
 for key in data_file.keys():
     TE_vals = data_file[key]["TE"]
     num_events = data_file[key]["num_target_events"]
-    d_x = data_file[key]["d_x"].value
+    l_x = data_file[key]["l_x"].value
     print(TE_vals.shape)
 
     fig, axs = plt.subplots(nrows = TE_vals.shape[2], figsize = (6, 12))
@@ -45,7 +45,7 @@ for key in data_file.keys():
 
         axs[i].set_xscale("log")
         axs[i].set_ylim([0, 1.8])
-        axs[i].set_title("$l_X$ = " + str(d_x[i]))
+        axs[i].set_title("$l_X$ = " + str(l_x[i]))
 
     axs[1].set_ylabel("TE (nats/second)")
     axs[0].set_xlabel("")

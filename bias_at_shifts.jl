@@ -2,11 +2,11 @@ using CSV: read
 using HDF5: h5open, g_create
 using Distances: Cityblock, Chebyshev, Euclidean
 
-include("../CoTETE.jl/CoTETE.jl")
+include("../CoTETE.jl/src/CoTETE.jl")
 
-D_Y = 1
-D_X = 1
-D_C = 1
+l_y = 1
+l_x = 1
+l_z = 1
 K = 10
 
 REPEATS = 200
@@ -56,12 +56,12 @@ h5open(string("run_outputs/bias_at_shifts_test-small5.h5"), "w") do file
         #for i = 1:size(shifts, 1)
             shifted_source_events = source_events .+ shifts[i]
             clamp!(shifted_source_events, 0, 1e6)
-            TE = CoTETE.do_preprocessing_and_calculate_TE(
+            TE = CoTETE.do_preprocessing_anl_zalculate_TE(
                 target_events,
                 shifted_source_events,
-                D_X,
-                D_Y,
-                d_c = D_C,
+                l_x,
+                l_y,
+                l_z = l_z,
                 conditioning_events = conditioning_events,
                 num_target_events = TARGET_TRAIN_LENGTH,
                 num_samples = NUM_SAMPLES_RATIO * TARGET_TRAIN_LENGTH,
@@ -71,12 +71,12 @@ h5open(string("run_outputs/bias_at_shifts_test-small5.h5"), "w") do file
             )
             TE_vals[repeat, i] = TE
 
-            TE_surrogate = CoTETE.do_preprocessing_and_calculate_TE(
+            TE_surrogate = CoTETE.do_preprocessing_anl_zalculate_TE(
                 target_events,
                 shifted_source_events,
-                D_X,
-                D_Y,
-                d_c = D_C,
+                l_x,
+                l_y,
+                l_z = l_z,
                 conditioning_events = conditioning_events,
                 num_target_events = TARGET_TRAIN_LENGTH,
                 num_samples = NUM_SAMPLES_RATIO * TARGET_TRAIN_LENGTH,
@@ -90,12 +90,12 @@ h5open(string("run_outputs/bias_at_shifts_test-small5.h5"), "w") do file
             TE_vals_surrogate[repeat, i] = TE_surrogate
 
             shifted_shifted_source_events = shifted_source_events .+ BIG_SHIFT_MULTIPLIER * (BIG_SHIFT_BASE + rand())
-            TE_shift_surrogate = CoTETE.do_preprocessing_and_calculate_TE(
+            TE_shift_surrogate = CoTETE.do_preprocessing_anl_zalculate_TE(
                 target_events,
                 shifted_shifted_source_events,
-                D_X,
-                D_Y,
-                d_c = D_C,
+                l_x,
+                l_y,
+                l_z = l_z,
                 conditioning_events = conditioning_events,
                 num_target_events = TARGET_TRAIN_LENGTH,
                 num_samples = NUM_SAMPLES_RATIO * TARGET_TRAIN_LENGTH,

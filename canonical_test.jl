@@ -5,10 +5,10 @@ using Distances: Cityblock, Chebyshev, Euclidean
 
 include("../CoTETE.jl/CoTETE.jl")
 
-D_Y = 1
+l_y = 1
 K = 4
 
-D_X_VALS = [1, 2, 3]
+l_x_VALS = [1, 2, 3]
 
 
 START_OFFSET = 5000
@@ -25,15 +25,15 @@ h5open("run_outputs/canonical_weeee.h5", "w") do file
     convert(Matrix, source_events)
     source_events = source_events[:, 1]
 
-    TE_vals = -100 * ones((length(D_X_VALS), length(TARGET_TRAIN_LENGTHS), maximum(REPETITIONS_PER_LENGTH)))
-    for d_x in D_X_VALS
+    TE_vals = -100 * ones((length(l_x_VALS), length(TARGET_TRAIN_LENGTHS), maximum(REPETITIONS_PER_LENGTH)))
+    for l_x in l_x_VALS
         for i = 1:length(TARGET_TRAIN_LENGTHS)
             Threads.@threads for j = 1:REPETITIONS_PER_LENGTH[i]
-                TE = CoTETE.do_preprocessing_and_calculate_TE(
+                TE = CoTETE.do_preprocessing_anl_zalculate_TE(
                     target_events,
                     source_events,
-                    d_x,
-                    D_Y,
+                    l_x,
+                    l_y,
                     num_target_events = TARGET_TRAIN_LENGTHS[i],
                     num_samples = Int(TARGET_TRAIN_LENGTHS[i]),
                     k = K,
@@ -41,14 +41,14 @@ h5open("run_outputs/canonical_weeee.h5", "w") do file
                     metric = Cityblock(),
                 )
 
-                TE_vals[d_x, i, j] = TE
+                TE_vals[l_x, i, j] = TE
             end
         end
     end
 
     g = g_create(file, string("bar"))
     g["TE"] = TE_vals
-    g["d_x"] = D_X_VALS
+    g["l_x"] = l_x_VALS
     g["num_target_events"] = TARGET_TRAIN_LENGTHS
 
 end

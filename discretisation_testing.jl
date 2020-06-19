@@ -20,12 +20,12 @@ function calculate_TE_discrete(
     target_events,
     source_events,
     delta_t,
-    d_x,
-    d_y,
+    l_x,
+    l_y,
     y_lag;
     c_lag = 0,
     conditioning_events = [0.0],
-    d_c = 0,
+    l_z = 0,
 )
 
     source_start_event = 1
@@ -39,7 +39,7 @@ function calculate_TE_discrete(
     source_end_event -= 1
     source_events = source_events[source_start_event:source_end_event]
 
-    if d_c > 0
+    if l_z > 0
         conditioning_start_event = 1
         while conditioning_events[conditioning_start_event] < target_events[1]
             conditioning_start_event += 1
@@ -67,59 +67,59 @@ function calculate_TE_discrete(
         discretised_source_events[Int(floor(source_events[i] / delta_t))+1] = 1
     end
 
-    discretised_conditioning_events = []
-    if d_c > 0
-        discretised_conditioning_events = zeros(Int8, Int(floor(conditioning_events[end] / delta_t)) + 1)
+    discretisel_zonditioning_events = []
+    if l_z > 0
+        discretisel_zonditioning_events = zeros(Int8, Int(floor(conditioning_events[end] / delta_t)) + 1)
 
         for i = 1:size(conditioning_events)[1]
-            discretised_conditioning_events[Int(floor(conditioning_events[i] / delta_t))+1] = 1
+            discretisel_zonditioning_events[Int(floor(conditioning_events[i] / delta_t))+1] = 1
         end
     end
 
     final_index = 0
-    if d_c > 0
+    if l_z > 0
         final_index = min(
             size(discretised_source_events)[1],
             size(discretised_target_events)[1],
-            size(discretised_conditioning_events)[1],
+            size(discretisel_zonditioning_events)[1],
         )
     else
         final_index = min(size(discretised_source_events)[1], size(discretised_target_events)[1])
     end
-    start_index = max(d_x, d_y, d_c) + 1 + max(y_lag, c_lag)
+    start_index = max(l_x, l_y, l_z) + 1 + max(y_lag, c_lag)
 
-    joint_history_representation = zeros(Int8, final_index - start_index + 1, d_x + d_y + d_c)
-    target_history_representation = zeros(Int8, final_index - start_index + 1, d_x + d_c)
+    joint_history_representation = zeros(Int8, final_index - start_index + 1, l_x + l_y + l_z)
+    target_history_representation = zeros(Int8, final_index - start_index + 1, l_x + l_z)
 
     for i = start_index:final_index
-        joint_history_representation[i-start_index+1, 1:d_x] = discretised_target_events[(i-d_x):(i-1)]
-        joint_history_representation[i-start_index+1, (d_x+1):(d_x+d_c)] =
-            discretised_conditioning_events[(i-d_c-c_lag):(i-1-c_lag)]
-        joint_history_representation[i-start_index+1, (d_x+d_c+1):(d_x+d_c+d_y)] =
-            discretised_source_events[(i-d_y-y_lag):(i-1-y_lag)]
-        target_history_representation[i-start_index+1, 1:d_x] = discretised_target_events[(i-d_x):(i-1)]
-        target_history_representation[i-start_index+1, (d_x+1):(d_x+d_c)] =
-            discretised_conditioning_events[(i-d_c-c_lag):(i-1-c_lag)]
+        joint_history_representation[i-start_index+1, 1:l_x] = discretised_target_events[(i-l_x):(i-1)]
+        joint_history_representation[i-start_index+1, (l_x+1):(l_x+l_z)] =
+            discretisel_zonditioning_events[(i-l_z-c_lag):(i-1-c_lag)]
+        joint_history_representation[i-start_index+1, (l_x+l_z+1):(l_x+l_z+l_y)] =
+            discretised_source_events[(i-l_y-y_lag):(i-1-y_lag)]
+        target_history_representation[i-start_index+1, 1:l_x] = discretised_target_events[(i-l_x):(i-1)]
+        target_history_representation[i-start_index+1, (l_x+1):(l_x+l_z)] =
+            discretisel_zonditioning_events[(i-l_z-c_lag):(i-1-c_lag)]
     end
 
     discretised_target_events = discretised_target_events[start_index:final_index]
     discretised_source_events = discretised_source_events[start_index:final_index]
-    if d_c > 0
-        discretised_conditioning_events = discretised_conditioning_events[start_index:final_index]
+    if l_z > 0
+        discretisel_zonditioning_events = discretisel_zonditioning_events[start_index:final_index]
     end
 
     histogram_target = Dict()
-    if d_x > 10
-        sizehint!(histogram_target, 2^(d_x + d_c - 3))
+    if l_x > 10
+        sizehint!(histogram_target, 2^(l_x + l_z - 3))
     end
     histogram_joint = Dict()
-    if d_x + d_y > 10
-        sizehint!(histogram_target, 2^(d_x + d_c + d_y - 3))
+    if l_x + l_y > 10
+        sizehint!(histogram_target, 2^(l_x + l_z + l_y - 3))
     end
 
     for i = 1:size(discretised_target_events)[1]
         ind = 1
-        for j = 1:(d_x+d_c)
+        for j = 1:(l_x+l_z)
             ind += target_history_representation[i, j] * 2^(j - 1)
         end
 
@@ -138,7 +138,7 @@ function calculate_TE_discrete(
         end
 
         ind = 1
-        for j = 1:(d_x+d_c+d_y)
+        for j = 1:(l_x+l_z+l_y)
             ind += joint_history_representation[i, j] * 2^(j - 1)
         end
         if haskey(histogram_joint, ind)
@@ -233,11 +233,11 @@ function bias_on_homogeneous()
     end
 end
 
-function find_lags_and_calc_TE(target_events, source_events, conditioning_events, dt, dx, dy, d_c, y_lag_max, c_lag_max)
+function find_lags_anl_zalc_TE(target_events, source_events, conditioning_events, dt, dx, dy, l_z, y_lag_max, c_lag_max)
 
     TE_at_c_lags = zeros(c_lag_max + 1)
     for c_lag = 0:c_lag_max
-        TE_at_c_lags[c_lag+1] = calculate_TE_discrete(target_events, conditioning_events, dt, dx, d_c, c_lag, d_c = 0)
+        TE_at_c_lags[c_lag+1] = calculate_TE_discrete(target_events, conditioning_events, dt, dx, l_z, c_lag, l_z = 0)
     end
     #max_TE = maximum(TE_at_c_lags)
     chosen_c_lag = findmax(TE_at_c_lags)[2] - 1
@@ -254,7 +254,7 @@ function find_lags_and_calc_TE(target_events, source_events, conditioning_events
             y_lag,
             c_lag = chosen_c_lag,
             conditioning_events = conditioning_events,
-            d_c = d_c,
+            l_z = l_z,
         )
     end
     #max_TE = maximum(TE_at_c_lags)
@@ -276,9 +276,9 @@ function conditional_independence_test()
 
     DT = 0.05
     MAX_LAG = 10
-    D_X = 7
-    D_Y = 7
-    D_C = 7
+    l_x = 7
+    l_y = 7
+    l_z = 7
 
     h5open(string("run_outputs/conditional_independence_discrete2.h5"), "w") do file
         for target_length in TARGET_TRAIN_LENGTHS
@@ -314,14 +314,14 @@ function conditional_independence_test()
                         target_start_event = START_OFFSET
                         target_end_event = START_OFFSET + target_length
 
-                        TE = find_lags_and_calc_TE(
+                        TE = find_lags_anl_zalc_TE(
                             target_events[target_start_event:target_end_event],
                             source_events,
                             conditioning_events,
                             DT,
-                            D_X,
-                            D_Y,
-                            D_C,
+                            l_x,
+                            l_y,
+                            l_z,
                             MAX_LAG,
                             MAX_LAG,
                         )
@@ -331,14 +331,14 @@ function conditional_independence_test()
                             source_events_surrogate = source_events .- 200 * (1 + rand())
                             clamp!(source_events_surrogate, 0, 1e6)
 
-                            TE_surrogate = find_lags_and_calc_TE(
+                            TE_surrogate = find_lags_anl_zalc_TE(
                                 target_events[target_start_event:target_end_event],
                                 source_events_surrogate,
                                 conditioning_events,
                                 DT,
-                                D_X,
-                                D_Y,
-                                D_C,
+                                l_x,
+                                l_y,
+                                l_z,
                                 MAX_LAG,
                                 MAX_LAG,
                             )
@@ -376,9 +376,9 @@ function connectivity_test()
 
     DT = 0.05
     MAX_LAG = 20
-    D_X = 7
-    D_Y = 7
-    D_C = 7
+    l_x = 7
+    l_y = 7
+    l_z = 7
 
     h5open(string("run_outputs/connectivity_discrete_full.h5"), "w") do file
         folder = "output_stg_full17/"
@@ -414,14 +414,14 @@ function connectivity_test()
                 conditioning_events = conditioning_events + 1e-6 .* randn(size(conditioning_events)[1])
                 sort!(conditioning_events)
 
-                TE = find_lags_and_calc_TE(
+                TE = find_lags_anl_zalc_TE(
                     target_events[target_start_event:target_end_event],
                     source_events,
                     conditioning_events,
                     DT,
-                    D_X,
-                    D_Y,
-                    D_C,
+                    l_x,
+                    l_y,
+                    l_z,
                     MAX_LAG,
                     MAX_LAG,
                 )
@@ -432,14 +432,14 @@ function connectivity_test()
                     source_events_surrogate = source_events .- 200 * (1 + rand())
                     clamp!(source_events_surrogate, 0, 1e6)
 
-                    TE_surrogate = find_lags_and_calc_TE(
+                    TE_surrogate = find_lags_anl_zalc_TE(
                         target_events[target_start_event:target_end_event],
                         source_events_surrogate,
                         conditioning_events,
                         DT,
-                        D_X,
-                        D_Y,
-                        D_C,
+                        l_x,
+                        l_y,
+                        l_z,
                         MAX_LAG,
                         MAX_LAG,
                     )

@@ -12,7 +12,7 @@ include("../CoTETE.jl/NearestNeighbors.jl/src/NearestNeighbors.jl")
 include("../CoTETE.jl/CoTETE.jl")
 
 D = 2
-D_X = 1
+l_x = 1
 K = 2
 START_AFTER_event = 700
 MAX_MAX_RATE = 500
@@ -47,16 +47,16 @@ for file_num = 1:NUM_FILES
     target_event_times, target_history_start_times,
     sampled_event_times, sampled_history_start_times =
         CoTETE.construct_history_embeddings(target, conditional_1,
-                                          D_X, D, num_target_events = Int(2e4),
+                                          l_x, D, num_target_events = Int(2e4),
                                           num_samples = Int(2e4), start_event = 500,
-                                          conditioning_events = conditional_2, d_c = D)
+                                          conditioning_events = conditional_2, l_z = D)
 
     combined = []
     push!(combined, representation_joint)
     push!(combined, sampled_representation_joint)
     combined = hcat(combined...)
 
-    sorted_combined = sort!(combined, dims = 2)
+    sortel_zombined = sort!(combined, dims = 2)
 
     w = CoTETE.nataf_transform!(representation_joint, sampled_representation_joint)
 
@@ -90,11 +90,11 @@ for file_num = 1:NUM_FILES
             embedding, start_time = CoTETE.make_one_embedding(current_time,
                                                             event_time_arrays,
                                                             trackers,
-                                                            [D_X, D, D])
+                                                            [l_x, D, D])
             orig_embedding = copy(embedding)
 
             for i = 1:size(embedding, 1)
-                embedding[i] = searchsortedfirst(sorted_combined[i, :], embedding[i])/(size(sorted_combined, 2) + 1)
+                embedding[i] = searchsortedfirst(sortel_zombined[i, :], embedding[i])/(size(sortel_zombined, 2) + 1)
                 embedding[i] = StatsFuns.norminvcdf.(embedding[i])
             end
             embedding = w * embedding
@@ -105,13 +105,13 @@ for file_num = 1:NUM_FILES
                                                               current_time + 1, start_time - 1,
                                                               target_event_times, target_history_start_times, 
                                                               K)
-            p_joint = 1/(maximum(radii_joint)^(D_X + 2 * D))
+            p_joint = 1/(maximum(radii_joint)^(l_x + 2 * D))
 
             indices_sampled_joint, radii_sampled_joint = NearestNeighbors.knn(tree_sampled_joint, embedding,
                                                                               current_time + 1, start_time - 1,
                                                                               sampled_event_times, sampled_history_start_times, 
                                                                               K)
-            p_sampled_joint = 1/(maximum(radii_sampled_joint)^(D_X + 2 * D))
+            p_sampled_joint = 1/(maximum(radii_sampled_joint)^(l_x + 2 * D))
 
             p = (average_rate * p_joint)/p_sampled_joint
             if isnan(p)

@@ -10,9 +10,9 @@ using PyCall
 include("../CoTETE.jl/CoTETE.jl")
 #include("GLM_generative.jl")
 
-D_X = 2
-D_C = 2
-D_Y = 2
+l_x = 2
+l_z = 2
+l_y = 2
 
 K = 10
 
@@ -60,12 +60,12 @@ h5open("run_outputs/stg_foo_bar_4_min.h5", "w") do file
                 conditioning_events = conditioning_events + 1e-6 .* randn(size(conditioning_events)[1])
                 sort!(conditioning_events)
                 #conditioning_events = conditioning_events[1000:min(3 * TARGET_TRAIN_LENGTH, length(conditioning_events))]
-                TE = CoTETE.do_preprocessing_and_calculate_TE(
+                TE = CoTETE.do_preprocessing_anl_zalculate_TE(
                     target_events,
                     source_events,
-                    D_X,
-                    D_Y,
-                    d_c = D_C,
+                    l_x,
+                    l_y,
+                    l_z = l_z,
                     conditioning_events = conditioning_events,
                     num_target_events = TARGET_TRAIN_LENGTH,
                     num_samples = NUM_SAMPLES_RATIO * TARGET_TRAIN_LENGTH,
@@ -80,12 +80,12 @@ h5open("run_outputs/stg_foo_bar_4_min.h5", "w") do file
                 Threads.@threads for i = 1:NUM_SURROGATES
                     #for i = 1:1
                     source_events_surrogate = copy(source_events)
-                    TE_surrogate = CoTETE.do_preprocessing_and_calculate_TE(
+                    TE_surrogate = CoTETE.do_preprocessing_anl_zalculate_TE(
                         target_events,
                         source_events,
-                        D_X,
-                        D_Y,
-                        d_c = D_C,
+                        l_x,
+                        l_y,
+                        l_z = l_z,
                         conditioning_events = conditioning_events,
                         num_target_events = TARGET_TRAIN_LENGTH,
                         num_samples = NUM_SAMPLES_RATIO * TARGET_TRAIN_LENGTH,
