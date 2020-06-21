@@ -60,7 +60,7 @@ h5open("run_outputs/stg_foo_bar_4_min.h5", "w") do file
                 conditioning_events = conditioning_events + 1e-6 .* randn(size(conditioning_events)[1])
                 sort!(conditioning_events)
                 #conditioning_events = conditioning_events[1000:min(3 * TARGET_TRAIN_LENGTH, length(conditioning_events))]
-                TE = CoTETE.do_preprocessing_and_calculate_TE(
+                TE = CoTETE.calculate_TE_from_event_times(
                     target_events,
                     source_events,
                     d_x,
@@ -80,7 +80,7 @@ h5open("run_outputs/stg_foo_bar_4_min.h5", "w") do file
                 Threads.@threads for i = 1:NUM_SURROGATES
                     #for i = 1:1
                     source_events_surrogate = copy(source_events)
-                    TE_surrogate = CoTETE.do_preprocessing_and_calculate_TE(
+                    TE_surrogate = CoTETE.calculate_TE_from_event_times(
                         target_events,
                         source_events,
                         d_x,

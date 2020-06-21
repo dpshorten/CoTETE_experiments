@@ -19,7 +19,7 @@ plt.rc('figure', titlesize=18)
 
 rc('text.latex', preamble=r'\usepackage{cmbright}')
 
-data_file = h5py.File("run_outputs/bias_at_samples_.h5", "r")
+data_file = h5py.File("run_outputs/figure_2.h5", "r")
 
 for key in data_file.keys():
     TE_vals = data_file[key]["TE"]
@@ -55,6 +55,7 @@ for key in data_file.keys():
     axs[3].set_xlabel("Number of Target Events")
     plt.subplots_adjust(hspace = 0.3)
 
+    plt.show()
     plt.savefig("figures/bias_at_samples_"
                 + str(data_file[key]["k"].value),
                 bbox_inches='tight')

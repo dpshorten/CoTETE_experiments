@@ -19,7 +19,7 @@ plt.rc('figure', titlesize=16)
 
 rc('text.latex', preamble=r'\usepackage{cmbright}')
 
-data_file = h5py.File("run_outputs/bias_at_foo.h5", "r")
+data_file = h5py.File("run_outputs/figure_6.h5", "r")
 
 for key in data_file.keys():
     TE_vals = data_file[key]["TE"].value
@@ -57,6 +57,6 @@ for key in data_file.keys():
     plt.legend(bbox_to_anchor=(1.04,1), loc="upper left")
 
     plt.tight_layout()
-    #plt.show()
+    plt.show()
 
     plt.savefig("figures/shifts_adjusted", dpi = 1000)

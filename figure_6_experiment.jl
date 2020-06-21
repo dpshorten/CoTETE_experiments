@@ -9,10 +9,12 @@ d_x = 1
 d_c = 1
 K = 10
 
-REPEATS = 200
+#REPEATS = 200
+REPEATS = 20
 START_OFFSET = 10000
-TARGET_TRAIN_LENGTH = Int(5e4)
-NUM_SAMPLES_RATIO = 1
+#TARGET_TRAIN_LENGTH = Int(5e4)
+TARGET_TRAIN_LENGTH = Int(1e4)
+NUM_SAMPLES_RATIO = 1.0
 SURROGATE_UPSAMPLE_RATIO = 1.0
 K_PERM = 10
 
@@ -27,10 +29,12 @@ BIG_SHIFT_MULTIPLIER = 300
 BIG_SHIFT_BASE = 1
 
 
-h5open(string("run_outputs/bias_at_shifts_test-small5.h5"), "w") do file
+h5open(string("run_outputs/figure_6.h5"), "w") do file
 
-    shifts1 = collect(0:0.13:10)
-    shifts2 = collect(-10:0.13:0)
+    #shifts1 = collect(0:0.13:10)
+    shifts1 = collect(0:0.7:10)
+    #shifts2 = collect(-10:0.13:0)
+    shifts2 = collect(-10:0.7:0)
     shifts = vcat(shifts2, shifts1)
 
     TE_vals = zeros(REPEATS, size(shifts, 1))
@@ -56,50 +60,52 @@ h5open(string("run_outputs/bias_at_shifts_test-small5.h5"), "w") do file
         #for i = 1:size(shifts, 1)
             shifted_source_events = source_events .+ shifts[i]
             clamp!(shifted_source_events, 0, 1e6)
-            TE = CoTETE.do_preprocessing_and_calculate_TE(
+            TE = CoTETE.calculate_TE_from_event_times(
                 target_events,
                 shifted_source_events,
                 d_x,
                 d_y,
-                d_c = d_c,
+                l_z = d_c,
+                auto_find_start_and_num_events = false,
                 conditioning_events = conditioning_events,
                 num_target_events = TARGET_TRAIN_LENGTH,
-                num_samples = NUM_SAMPLES_RATIO * TARGET_TRAIN_LENGTH,
-                k = K,
+                num_samples_ratio = NUM_SAMPLES_RATIO,
+                k_global = K,
                 start_event = START_OFFSET,
                 metric = Cityblock(),
             )
             TE_vals[repeat, i] = TE
 
-            TE_surrogate = CoTETE.do_preprocessing_and_calculate_TE(
+            TE_surrogate = CoTETE.calculate_TE_from_event_times(
                 target_events,
                 shifted_source_events,
                 d_x,
                 d_y,
-                d_c = d_c,
+                l_z = d_c,
+                auto_find_start_and_num_events = false,
                 conditioning_events = conditioning_events,
                 num_target_events = TARGET_TRAIN_LENGTH,
-                num_samples = NUM_SAMPLES_RATIO * TARGET_TRAIN_LENGTH,
-                k = K,
+                num_samples_ratio = NUM_SAMPLES_RATIO,
+                k_global = K,
                 start_event = START_OFFSET,
                 metric = Cityblock(),
                 is_surrogate = true,
-                surrogate_upsample_ratio = SURROGATE_UPSAMPLE_RATIO,
-                k_perm = K_PERM,
+                surrogate_num_samples_ratio = SURROGATE_UPSAMPLE_RATIO,
             )
             TE_vals_surrogate[repeat, i] = TE_surrogate
 
             shifted_shifted_source_events = shifted_source_events .+ BIG_SHIFT_MULTIPLIER * (BIG_SHIFT_BASE + rand())
-            TE_shift_surrogate = CoTETE.do_preprocessing_and_calculate_TE(
+            TE_shift_surrogate = CoTETE.calculate_TE_from_event_times(
                 target_events,
                 shifted_shifted_source_events,
                 d_x,
                 d_y,
-                d_c = d_c,
+                l_z = d_c,
+                auto_find_start_and_num_events = false,
                 conditioning_events = conditioning_events,
                 num_target_events = TARGET_TRAIN_LENGTH,
-                num_samples = NUM_SAMPLES_RATIO * TARGET_TRAIN_LENGTH,
-                k = K,
+                num_samples_ratio = NUM_SAMPLES_RATIO,
+                k_global = K,
                 start_event = START_OFFSET,
                 metric = Cityblock(),
             )

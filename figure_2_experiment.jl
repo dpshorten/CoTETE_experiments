@@ -2,11 +2,11 @@ using CSV: read
 using HDF5: h5open, g_create
 using Distances: Cityblock, Chebyshev, Euclidean
 
-include("../CoTETE.jl/CoTETE.jl")
+include("../CoTETE.jl/src/CoTETE.jl")
 
 d_y = 1
 d_x = 1
-K = [4, 10]
+K = [1, 5]
 
 MU = [0.5, 1, 2, 5]
 
@@ -14,7 +14,7 @@ START_OFFSET = 5000
 TARGET_TRAIN_LENGTHS = [Int(1e2), Int(1e3), Int(1e4), Int(1e5)]
 REPETITIONS_PER_LENGTH = [100, 20, 20, 20]
 
-h5open(string("run_outputs/bias_at_samples_", ".h5"), "w") do file
+h5open(string("run_outputs/figure_2", ".h5"), "w") do file
 
     target_events = 1e7 * rand(Int(1e7))
     sort!(target_events)
@@ -30,14 +30,15 @@ h5open(string("run_outputs/bias_at_samples_", ".h5"), "w") do file
             for i = 1:length(TARGET_TRAIN_LENGTHS)
                 Threads.@threads for j = 1:REPETITIONS_PER_LENGTH[i]
 
-                    TE = CoTETE.do_preprocessing_and_calculate_TE(
+                    TE = CoTETE.calculate_TE_from_event_times(
                         target_events,
                         source_events,
                         d_x,
                         d_y,
+                        auto_find_start_and_num_events = false,
                         num_target_events = TARGET_TRAIN_LENGTHS[i],
-                        num_samples =  Int(mu * TARGET_TRAIN_LENGTHS[i]),
-                        k = k,
+                        num_samples_ratio =  mu,
+                        k_global = k,
                         start_event = START_OFFSET + (j * TARGET_TRAIN_LENGTHS[i]),
                         metric = Cityblock(),
                     )

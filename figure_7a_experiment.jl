@@ -3,17 +3,19 @@ using HDF5: h5open, g_create
 using Distances: Cityblock, Chebyshev
 
 
-include("../CoTETE.jl/CoTETE.jl")
+include("../CoTETE.jl/src/CoTETE.jl")
 
 d_y = 1
 d_x = 1
 d_c = 1
 K = 10
 
-REPEATS = 10
+#REPEATS = 10
+REPEATS = 4
 START_OFFSET = 10000
-TARGET_TRAIN_LENGTH = Int(5e4)
-NUM_SAMPLES_RATIO = 1
+#TARGET_TRAIN_LENGTH = Int(5e4)
+TARGET_TRAIN_LENGTH = Int(5e3)
+NUM_SAMPLES_RATIO = 1.0
 SURROGATE_UPSAMPLE_RATIO = 1.0
 K_PERM = 10
 
@@ -24,7 +26,7 @@ MOTHER_T = 1
 DAUGHTER_GAP_1 = 0.25
 DAUGHTER_GAP_2 = 0.5
 
-h5open(string("run_outputs/conditional_independence_continuous2.h5"), "w") do file
+h5open(string("run_outputs/figure_7a.h5"), "w") do file
 
         for daughter_noise in DAUGHTER_NOISE_STDS
                 # Watch out, the definition of a "positive" is different to paper
@@ -56,16 +58,17 @@ h5open(string("run_outputs/conditional_independence_continuous2.h5"), "w") do fi
                                         target_events = daughter_events_2
                                 end
 
-                                TE = CoTETE.do_preprocessing_and_calculate_TE(
+                                TE = CoTETE.calculate_TE_from_event_times(
                                         target_events,
                                         source_events,
                                         d_x,
                                         d_y,
-                                        d_c = d_c,
+                                        l_z = d_c,
+                                        auto_find_start_and_num_events = false,
                                         conditioning_events = conditioning_events,
                                         num_target_events = TARGET_TRAIN_LENGTH,
-                                        num_samples = NUM_SAMPLES_RATIO * TARGET_TRAIN_LENGTH,
-                                        k = K,
+                                        num_samples_ratio = NUM_SAMPLES_RATIO,
+                                        k_global = K,
                                         start_event = START_OFFSET,
                                         metric = Cityblock(),
                                 )
@@ -73,20 +76,21 @@ h5open(string("run_outputs/conditional_independence_continuous2.h5"), "w") do fi
 
                                 Threads.@threads for j = 1:NUM_SURROGATES
                                 #for j = 1:NUM_SURROGATES
-                                        TE_surrogate = CoTETE.do_preprocessing_and_calculate_TE(
+                                        TE_surrogate = CoTETE.calculate_TE_from_event_times(
                                                 target_events,
                                                 source_events,
                                                 d_x,
                                                 d_y,
-                                                d_c = d_c,
+                                                l_z = d_c,
+                                                auto_find_start_and_num_events = false,
                                                 conditioning_events = conditioning_events,
                                                 num_target_events = TARGET_TRAIN_LENGTH,
-                                                num_samples = NUM_SAMPLES_RATIO * TARGET_TRAIN_LENGTH,
-                                                k = K,
+                                                num_samples_ratio = NUM_SAMPLES_RATIO,
+                                                k_global = K,
                                                 start_event = START_OFFSET,
                                                 metric = Cityblock(),
                                                 is_surrogate = true,
-                                                surrogate_upsample_ratio = SURROGATE_UPSAMPLE_RATIO,
+                                                surrogate_num_samples_ratio = SURROGATE_UPSAMPLE_RATIO,
                                                 k_perm = K_PERM,
                                         )
 
