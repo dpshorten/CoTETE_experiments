@@ -1,2 +1,2 @@
-Note that this runs against an old commit of CoTETE.jl.
-Specifically: de052cb83df472d327f900824c27417b7ac4f5fe
+Please refer to the documentation attached to the
+[CoTETE.jl](https://github.com/dpshorten/CoTETE.jl) package.
