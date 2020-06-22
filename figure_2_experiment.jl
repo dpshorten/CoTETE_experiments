@@ -2,7 +2,7 @@ using CSV: read
 using HDF5: h5open, g_create
 using Distances: Cityblock, Chebyshev, Euclidean
 
-include("../CoTETE.jl/src/CoTETE.jl")
+using CoTETE
 
 d_y = 1
 d_x = 1
@@ -11,7 +11,8 @@ K = [1, 5]
 MU = [0.5, 1, 2, 5]
 
 START_OFFSET = 5000
-TARGET_TRAIN_LENGTHS = [Int(1e2), Int(1e3), Int(1e4), Int(1e5)]
+#TARGET_TRAIN_LENGTHS = [Int(1e2), Int(1e3), Int(1e4), Int(1e5)]
+TARGET_TRAIN_LENGTHS = [Int(1e2), Int(1e3), Int(1e4)]
 REPETITIONS_PER_LENGTH = [100, 20, 20, 20]
 
 h5open(string("run_outputs/figure_2", ".h5"), "w") do file
