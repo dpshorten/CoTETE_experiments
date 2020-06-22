@@ -75,7 +75,7 @@ FOLDERS = ["output_stg_full17/"]
 NAMES = ["min"]
 
 #data_file = h5py.File("run_outputs/stg_foo_bar_4_min.h5", "r")
-data_file = h5py.File("run_outputs/connectivity_discrete_full.h5", "r")
+data_file = h5py.File("run_outputs/figure_8.h5", "r")
 
 for i in range(len(FOLDERS)):
 

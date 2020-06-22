@@ -6,8 +6,7 @@ using Random: rand, randn
 using StatsBase: sample
 using PyCall
 
-
-include("../CoTETE.jl/CoTETE.jl")
+using CoTETE
 #include("GLM_generative.jl")
 
 d_x = 2
@@ -27,7 +26,7 @@ NUM_SURROGATES = 100
 
 FOLDERS = ["output_stg_full_spk/"]
 
-h5open("run_outputs/stg_foo_bar_4_min.h5", "w") do file
+h5open("run_outputs/figure_8.h5", "w") do file
     f = open("out", "w")
     for folder in FOLDERS
         for j = 1:10
