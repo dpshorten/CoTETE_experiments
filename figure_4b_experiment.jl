@@ -15,10 +15,10 @@ START_OFFSET = 5000
 TARGET_TRAIN_LENGTHS = [Int(1e2), Int(1e3), Int(1e4), Int(1e5)]
 REPETITIONS_PER_LENGTH = [1000, 100, 20, 20]
 
-h5open("run_outputs/figure_4b.h5", "w") do file
+h5open("figure_4b.h5", "w") do file
 
-    target_events = read("canonical_example_dats/train_x_1.dat")
-    source_events = read("canonical_example_dats/train_y_1.dat")
+    target_events = read("train_x_1.dat")
+    source_events = read("train_y_1.dat")
 
     convert(Matrix, target_events)
     target_events = target_events[:, 1]

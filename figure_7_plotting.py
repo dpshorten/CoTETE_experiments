@@ -21,7 +21,8 @@ plt.rc('figure', titlesize=18)
 rc('text.latex', preamble=r'\usepackage{cmbright} \usepackage{amssymb}')
 
 
-data_file = h5py.File("run_outputs/figure_7a.h5", "r")
+#data_file = h5py.File("figure_7a.h5", "r")
+data_file = h5py.File("figure_7b.h5", "r")
 
 P_CUTOFF = 0.95
 

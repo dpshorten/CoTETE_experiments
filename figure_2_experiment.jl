@@ -15,7 +15,7 @@ START_OFFSET = 5000
 TARGET_TRAIN_LENGTHS = [Int(1e2), Int(1e3), Int(1e4)]
 REPETITIONS_PER_LENGTH = [100, 20, 20, 20]
 
-h5open(string("run_outputs/figure_2", ".h5"), "w") do file
+h5open(string("figure_2", ".h5"), "w") do file
 
     target_events = 1e7 * rand(Int(1e7))
     sort!(target_events)

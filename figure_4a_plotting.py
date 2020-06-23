@@ -28,5 +28,5 @@ ax.set_ylabel("$\lambda_{x|y}$")
 ax.set_xlabel("$t_y^1$")
 plt.show()
 
-plt.savefig("figures/rate", bbox_inches='tight')
+plt.savefig("rate", bbox_inches='tight')
 

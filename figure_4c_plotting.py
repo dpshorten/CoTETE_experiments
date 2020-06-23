@@ -10,15 +10,15 @@ from matplotlib import rc
 rc('font',**{'family':'sans-serif','sans-serif':['Helvetica'],
              'size' : 18})
 
-plt.rc('axes', titlesize=18) 
+plt.rc('axes', titlesize=18)
 plt.rc('axes', labelsize=18)
 plt.rc('xtick', labelsize=14)
 plt.rc('ytick', labelsize=14)
-plt.rc('figure', titlesize=18) 
+plt.rc('figure', titlesize=18)
 
 rc('text.latex', preamble=r'\usepackage{cmbright}')
 
-data_file = h5py.File("run_outputs/canonical_discrete.h5", "r")
+data_file = h5py.File("figure_4c.h5", "r")
 
 for key in data_file.keys():
     TE_vals = data_file[key]["TE"]
@@ -57,4 +57,5 @@ for key in data_file.keys():
     axs[2].set_xlabel("")
     axs[3].set_xlabel("Number of Target Events")
 
-    plt.savefig("figures/discrete_canonical", bbox_inches='tight')
+    plt.show()
+    plt.savefig("discrete_canonical", bbox_inches='tight')

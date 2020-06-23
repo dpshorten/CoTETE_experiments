@@ -26,7 +26,7 @@ MOTHER_T = 1
 DAUGHTER_GAP_1 = 0.25
 DAUGHTER_GAP_2 = 0.5
 
-h5open(string("run_outputs/figure_7a.h5"), "w") do file
+h5open(string("figure_7a.h5"), "w") do file
 
         for daughter_noise in DAUGHTER_NOISE_STDS
                 # Watch out, the definition of a "positive" is different to paper

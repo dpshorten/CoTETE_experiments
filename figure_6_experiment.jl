@@ -29,7 +29,7 @@ BIG_SHIFT_MULTIPLIER = 300
 BIG_SHIFT_BASE = 1
 
 
-h5open(string("run_outputs/figure_6.h5"), "w") do file
+h5open(string("figure_6.h5"), "w") do file
 
     #shifts1 = collect(0:0.13:10)
     shifts1 = collect(0:0.7:10)

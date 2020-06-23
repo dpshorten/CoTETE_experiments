@@ -4,7 +4,6 @@ using Distances: Cityblock, Chebyshev, Euclidean
 using Combinatorics: permutations
 using Random: rand, randn
 using StatsBase: sample
-using PyCall
 
 using CoTETE
 #include("GLM_generative.jl")
@@ -16,17 +15,19 @@ d_y = 2
 K = 10
 
 START_OFFSET = 200
-TARGET_TRAIN_LENGTH = Int(4e4)
+TARGET_TRAIN_LENGTH = Int(2e3)
+#TARGET_TRAIN_LENGTH = Int(1e4)
 METRIC = Cityblock()
-NUM_SAMPLES_RATIO = 1
+NUM_SAMPLES_RATIO = 1.0
 SURROGATE_UPSAMPLE_RATIO = 1.0
 K_PERM = 5
 
-NUM_SURROGATES = 100
+#NUM_SURROGATES = 100
+NUM_SURROGATES = 20
 
-FOLDERS = ["output_stg_full_spk/"]
+FOLDERS = ["stg_spike_files/"]
 
-h5open("run_outputs/figure_8.h5", "w") do file
+h5open("figure_8c.h5", "w") do file
     f = open("out", "w")
     for folder in FOLDERS
         for j = 1:10
@@ -64,11 +65,12 @@ h5open("run_outputs/figure_8.h5", "w") do file
                     source_events,
                     d_x,
                     d_y,
-                    d_c = d_c,
+                    l_z = d_c,
                     conditioning_events = conditioning_events,
+                    auto_find_start_and_num_events = false,
                     num_target_events = TARGET_TRAIN_LENGTH,
-                    num_samples = NUM_SAMPLES_RATIO * TARGET_TRAIN_LENGTH,
-                    k = K,
+                    num_samples_ratio = NUM_SAMPLES_RATIO,
+                    k_global = K,
                     start_event = START_OFFSET,
                     metric = Cityblock(),
                 )
@@ -84,15 +86,16 @@ h5open("run_outputs/figure_8.h5", "w") do file
                         source_events,
                         d_x,
                         d_y,
-                        d_c = d_c,
+                        l_z = d_c,
                         conditioning_events = conditioning_events,
+                        auto_find_start_and_num_events = false,
                         num_target_events = TARGET_TRAIN_LENGTH,
-                        num_samples = NUM_SAMPLES_RATIO * TARGET_TRAIN_LENGTH,
-                        k = K,
+                        num_samples_ratio = NUM_SAMPLES_RATIO,
+                        k_global = K,
                         start_event = START_OFFSET,
                         metric = Cityblock(),
                         is_surrogate = true,
-                        surrogate_upsample_ratio = SURROGATE_UPSAMPLE_RATIO,
+                        surrogate_num_samples_ratio = SURROGATE_UPSAMPLE_RATIO,
                         k_perm = K_PERM,
                     )
                     surrogates[i] = TE_surrogate

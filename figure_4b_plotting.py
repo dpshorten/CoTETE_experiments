@@ -19,7 +19,7 @@ plt.rc('figure', titlesize=18)
 
 rc('text.latex', preamble=r'\usepackage{cmbright}')
 
-data_file = h5py.File("run_outputs/figure_4b.h5", "r")
+data_file = h5py.File("figure_4b.h5", "r")
 
 for key in data_file.keys():
     TE_vals = data_file[key]["TE"]
@@ -53,4 +53,4 @@ for key in data_file.keys():
     axs[2].set_xlabel("Number of Target Events")
 
     plt.show()
-    #plt.savefig("figures/canonical_")
+    #plt.savefig("canonical_")
