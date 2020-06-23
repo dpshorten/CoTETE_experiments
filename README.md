@@ -4,11 +4,9 @@ This repository contains code for reproducing the figures in
 Please first setup the [CoTETE.jl](https://github.com/dpshorten/CoTETE.jl) package, as described
 in it's documentation, before attempting to run these scripts.
 
-Once CoTETE.jl has been setup, you should be able to run the julia script associated with a figure. These scripts
-assume that there is a folder named "run outputs", where the results can be saved in an HDF5 file.
+Once CoTETE.jl has been setup, you should be able to run the julia script associated with a figure. 
 
 ```console
-david@home:~$ mkdir
 david@home:~$ julia figure_2_experiment.jl
 ```
 
@@ -25,4 +23,4 @@ You can download the data for figure 8
 [here](https://unisyd-my.sharepoint.com/:u:/r/personal/david_shorten_sydney_edu_au/Documents/stg_spike_files.zip?csf=1&web=1&e=2XkX6n).
 
 Note that many of the parameters used for the figures in the paper have been commented out and
-replaced with parameter that make the experiments run faster. Running the experiments for some of the figures (eg: figure 6) required an overnight run on a cluster. 
+replaced with parameter that make the experiments run faster. Running the experiments for some of the figures (eg: figure 6) required an overnight run on a cluster.
