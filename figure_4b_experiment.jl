@@ -3,7 +3,7 @@ using HDF5: h5open, g_create
 using Distances: Cityblock, Chebyshev, Euclidean
 
 
-include("../CoTETE.jl/src/CoTETE.jl")
+using CoTETE
 
 d_y = 1
 K = 4
