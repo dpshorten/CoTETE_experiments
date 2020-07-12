@@ -4,6 +4,8 @@ This repository contains code for reproducing the figures in
 Please first setup the [CoTETE.jl](https://github.com/dpshorten/CoTETE.jl) package, as described
 in it's documentation, before attempting to run these scripts.
 
+At present, it does not work with the latest version of CoTETE.jl. Please use commit: e68cf12f0f2d5c657b95f620ecdc7af9b411f469. 
+
 Once CoTETE.jl has been setup, you should be able to run the julia script associated with a figure.
 eg:
 
