@@ -40,7 +40,7 @@ h5open("figure_4c.h5", "w") do file
                 end
                 source_end_event -= 1
 
-                TE = calculate_TE_discrete(
+                TE = estimate_TE_discrete(
                     target_events[target_start_event:target_end_event],
                     source_events[source_start_event:source_end_event],
                     DT_VALS[l],

@@ -4,8 +4,8 @@ using Distances: Cityblock, Chebyshev, Euclidean
 
 using CoTETE
 
-d_y = 1
-d_x = 1
+L_Y = 1
+L_X = 1
 K = [1, 5]
 
 MU = [0.5, 1, 2, 5]
@@ -23,25 +23,27 @@ h5open(string("figure_2", ".h5"), "w") do file
     sort!(source_events)
 
     for k in K
-        TE_vals = -100 * ones((length(MU), length(TARGET_TRAIN_LENGTHS), maximum(REPETITIONS_PER_LENGTH)))
+        TE_vals =
+            -100 * ones((length(MU), length(TARGET_TRAIN_LENGTHS), maximum(REPETITIONS_PER_LENGTH)))
         mu_ind = 0
         for mu in MU
             println("mu ", mu)
             mu_ind += 1
             for i = 1:length(TARGET_TRAIN_LENGTHS)
                 Threads.@threads for j = 1:REPETITIONS_PER_LENGTH[i]
-
-                    TE = CoTETE.calculate_TE_from_event_times(
+                    parameters = CoTETE.CoTETEParameters(
+                        l_x = L_X,
+                        l_y = L_Y,
+                        auto_find_start_and_num_events = false,
+                        start_event = START_OFFSET + (j * TARGET_TRAIN_LENGTHS[i]),
+                        num_target_events = TARGET_TRAIN_LENGTHS[i],
+                        num_samples_ratio = mu,
+                        k_global = k,
+                    )
+                    TE = CoTETE.estimate_TE_from_event_times(
+                        parameters,
                         target_events,
                         source_events,
-                        d_x,
-                        d_y,
-                        auto_find_start_and_num_events = false,
-                        num_target_events = TARGET_TRAIN_LENGTHS[i],
-                        num_samples_ratio =  mu,
-                        k_global = k,
-                        start_event = START_OFFSET + (j * TARGET_TRAIN_LENGTHS[i]),
-                        metric = Cityblock(),
                     )
 
                     TE_vals[mu_ind, i, j] = TE

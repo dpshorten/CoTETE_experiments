@@ -20,7 +20,7 @@ h5open(string("figure_3", ".h5"), "w") do file
                     source_events = Float32(TARGET_TRAIN_LENGTHS[i]) * rand(TARGET_TRAIN_LENGTHS[i])
                     sort!(target_events)
                     sort!(source_events)
-                    TE = calculate_TE_discrete(
+                    TE = estimate_TE_discrete(
                         target_events,
                         source_events,
                         DT_VALS[l],

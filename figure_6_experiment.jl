@@ -46,8 +46,10 @@ h5open(string("figure_6.h5"), "w") do file
         mother_intervals = MOTHER_NOISE_STD .* randn(GENERATION_LENGTH) .+ MOTHER_T
         clamp!(mother_intervals, 0, 1e6)
         mother_events = cumsum(mother_intervals)
-        daughter_events_1 = mother_events + DAUGHTER_NOISE_STD .* randn(GENERATION_LENGTH) .+ DAUGHTER_GAP_1
-        daughter_events_2 = mother_events + DAUGHTER_NOISE_STD .* randn(GENERATION_LENGTH) .+ DAUGHTER_GAP_2
+        daughter_events_1 =
+            mother_events + DAUGHTER_NOISE_STD .* randn(GENERATION_LENGTH) .+ DAUGHTER_GAP_1
+        daughter_events_2 =
+            mother_events + DAUGHTER_NOISE_STD .* randn(GENERATION_LENGTH) .+ DAUGHTER_GAP_2
         sort!(daughter_events_1)
         sort!(daughter_events_2)
         clamp!(daughter_events_1, 0, 1e6)
@@ -57,57 +59,40 @@ h5open(string("figure_6.h5"), "w") do file
         target_events = daughter_events_2
 
         Threads.@threads for i = 1:size(shifts, 1)
-        #for i = 1:size(shifts, 1)
+            #for i = 1:size(shifts, 1)
             shifted_source_events = source_events .+ shifts[i]
             clamp!(shifted_source_events, 0, 1e6)
-            TE = CoTETE.calculate_TE_from_event_times(
-                target_events,
-                shifted_source_events,
-                d_x,
-                d_y,
+
+            parameters = CoTETE.CoTETEParameters(
+                l_x = d_x,
+                l_y = d_y,
                 l_z = d_c,
                 auto_find_start_and_num_events = false,
-                conditioning_events = conditioning_events,
+                start_event = START_OFFSET,
                 num_target_events = TARGET_TRAIN_LENGTH,
                 num_samples_ratio = NUM_SAMPLES_RATIO,
                 k_global = K,
-                start_event = START_OFFSET,
-                metric = Cityblock(),
+                num_surrogates = 1
+            )
+
+            TE, p, surrogates = CoTETE.estimate_TE_and_p_value_from_event_times(
+                parameters,
+                target_events,
+                shifted_source_events,
+                conditioning_events = conditioning_events,
+                return_surrogate_TE_values = true,
             )
             TE_vals[repeat, i] = TE
 
-            TE_surrogate = CoTETE.calculate_TE_from_event_times(
-                target_events,
-                shifted_source_events,
-                d_x,
-                d_y,
-                l_z = d_c,
-                auto_find_start_and_num_events = false,
-                conditioning_events = conditioning_events,
-                num_target_events = TARGET_TRAIN_LENGTH,
-                num_samples_ratio = NUM_SAMPLES_RATIO,
-                k_global = K,
-                start_event = START_OFFSET,
-                metric = Cityblock(),
-                is_surrogate = true,
-                surrogate_num_samples_ratio = SURROGATE_UPSAMPLE_RATIO,
-            )
-            TE_vals_surrogate[repeat, i] = TE_surrogate
+            TE_vals_surrogate[repeat, i] = surrogates[1]
 
-            shifted_shifted_source_events = shifted_source_events .+ BIG_SHIFT_MULTIPLIER * (BIG_SHIFT_BASE + rand())
-            TE_shift_surrogate = CoTETE.calculate_TE_from_event_times(
+            shifted_shifted_source_events =
+                shifted_source_events .+ BIG_SHIFT_MULTIPLIER * (BIG_SHIFT_BASE + rand())
+            TE_shift_surrogate = CoTETE.estimate_TE_from_event_times(
+                parameters,
                 target_events,
                 shifted_shifted_source_events,
-                d_x,
-                d_y,
-                l_z = d_c,
-                auto_find_start_and_num_events = false,
                 conditioning_events = conditioning_events,
-                num_target_events = TARGET_TRAIN_LENGTH,
-                num_samples_ratio = NUM_SAMPLES_RATIO,
-                k_global = K,
-                start_event = START_OFFSET,
-                metric = Cityblock(),
             )
             TE_vals_shift_surrogate[repeat, i] = TE_shift_surrogate
         end

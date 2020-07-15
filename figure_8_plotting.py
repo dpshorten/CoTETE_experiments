@@ -43,7 +43,7 @@ LINKS = [
    "PY-LP",
 ]
 
-data_file = h5py.File("figure_8d.h5", "r")
+data_file = h5py.File("figure_8c.h5", "r")
 
 plt.clf()
 

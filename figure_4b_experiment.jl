@@ -25,23 +25,22 @@ h5open("figure_4b.h5", "w") do file
     convert(Matrix, source_events)
     source_events = source_events[:, 1]
 
-    TE_vals = -100 * ones((length(d_x_VALS), length(TARGET_TRAIN_LENGTHS), maximum(REPETITIONS_PER_LENGTH)))
+    TE_vals =
+        -100 *
+        ones((length(d_x_VALS), length(TARGET_TRAIN_LENGTHS), maximum(REPETITIONS_PER_LENGTH)))
     for d_x in d_x_VALS
         for i = 1:length(TARGET_TRAIN_LENGTHS)
             Threads.@threads for j = 1:REPETITIONS_PER_LENGTH[i]
-                TE = CoTETE.calculate_TE_from_event_times(
-                    target_events,
-                    source_events,
-                    d_x,
-                    d_y,
+                parameters = CoTETE.CoTETEParameters(
+                    l_x = d_x,
+                    l_y = d_y,
                     auto_find_start_and_num_events = false,
+                    start_event = START_OFFSET + (j * TARGET_TRAIN_LENGTHS[i]),
                     num_target_events = TARGET_TRAIN_LENGTHS[i],
                     num_samples_ratio = 1.0,
                     k_global = K,
-                    start_event = START_OFFSET + (j * TARGET_TRAIN_LENGTHS[i]),
-                    metric = Cityblock(),
                 )
-
+                TE = CoTETE.estimate_TE_from_event_times(parameters, target_events, source_events)
                 TE_vals[d_x, i, j] = TE
             end
         end

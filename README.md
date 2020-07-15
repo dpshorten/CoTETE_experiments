@@ -1,6 +1,3 @@
-This repository contains code for reproducing the figures in
-[Estimating Transfer Entropy in Continuous Time Between Neural Spike Trains or Other Event-Based Data](https://doi.org/10.1101/2020.06.16.154377).
-
 Please first setup the [CoTETE.jl](https://github.com/dpshorten/CoTETE.jl) package, as described
 in it's documentation, before attempting to run these scripts.
 

@@ -16,7 +16,7 @@ using Random
 using HDF5
 using Combinatorics
 
-function calculate_TE_discrete(
+function estimate_TE_discrete(
     target_events,
     source_events,
     delta_t,
@@ -200,7 +200,7 @@ function find_lags_and_calc_TE(target_events, source_events, conditioning_events
 
     TE_at_c_lags = zeros(c_lag_max + 1)
     for c_lag = 0:c_lag_max
-        TE_at_c_lags[c_lag+1] = calculate_TE_discrete(target_events, conditioning_events, dt, dx, d_c, c_lag, d_c = 0)
+        TE_at_c_lags[c_lag+1] = estimate_TE_discrete(target_events, conditioning_events, dt, dx, d_c, c_lag, d_c = 0)
     end
     #max_TE = maximum(TE_at_c_lags)
     chosen_c_lag = findmax(TE_at_c_lags)[2] - 1
@@ -208,7 +208,7 @@ function find_lags_and_calc_TE(target_events, source_events, conditioning_events
 
     TE_at_y_lags = zeros(c_lag_max + 1)
     for y_lag = 0:y_lag_max
-        TE_at_y_lags[y_lag+1] = calculate_TE_discrete(
+        TE_at_y_lags[y_lag+1] = estimate_TE_discrete(
             target_events,
             source_events,
             dt,

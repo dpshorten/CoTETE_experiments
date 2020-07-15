@@ -57,49 +57,31 @@ h5open("figure_8c.h5", "w") do file
                 #source_events = source_events[1000:min(3 * TARGET_TRAIN_LENGTH, length(source_events))]
                 convert(Matrix, conditioning_events)
                 conditioning_events = conditioning_events[:, 1]
-                conditioning_events = conditioning_events + 1e-6 .* randn(size(conditioning_events)[1])
+                conditioning_events =
+                    conditioning_events + 1e-6 .* randn(size(conditioning_events)[1])
                 sort!(conditioning_events)
                 #conditioning_events = conditioning_events[1000:min(3 * TARGET_TRAIN_LENGTH, length(conditioning_events))]
-                TE = CoTETE.calculate_TE_from_event_times(
-                    target_events,
-                    source_events,
-                    d_x,
-                    d_y,
+
+                parameters = CoTETE.CoTETEParameters(
+                    l_x = d_x,
+                    l_y = d_y,
                     l_z = d_c,
-                    conditioning_events = conditioning_events,
                     auto_find_start_and_num_events = false,
+                    start_event = START_OFFSET,
                     num_target_events = TARGET_TRAIN_LENGTH,
                     num_samples_ratio = NUM_SAMPLES_RATIO,
                     k_global = K,
-                    start_event = START_OFFSET,
-                    metric = Cityblock(),
+                    num_surrogates = NUM_SURROGATES,
                 )
 
-                println("TE ", TE)
-                surrogates = zeros(Float64, NUM_SURROGATES)
-                #source_surrogates = generate(source_events, target_events, conditioning_events)
-                Threads.@threads for i = 1:NUM_SURROGATES
-                    #for i = 1:1
-                    source_events_surrogate = copy(source_events)
-                    TE_surrogate = CoTETE.calculate_TE_from_event_times(
-                        target_events,
-                        source_events,
-                        d_x,
-                        d_y,
-                        l_z = d_c,
-                        conditioning_events = conditioning_events,
-                        auto_find_start_and_num_events = false,
-                        num_target_events = TARGET_TRAIN_LENGTH,
-                        num_samples_ratio = NUM_SAMPLES_RATIO,
-                        k_global = K,
-                        start_event = START_OFFSET,
-                        metric = Cityblock(),
-                        is_surrogate = true,
-                        surrogate_num_samples_ratio = SURROGATE_UPSAMPLE_RATIO,
-                        k_perm = K_PERM,
-                    )
-                    surrogates[i] = TE_surrogate
-                end
+                TE, p, surrogates = CoTETE.estimate_TE_and_p_value_from_event_times(
+                    parameters,
+                    target_events,
+                    source_events,
+                    conditioning_events = conditioning_events,
+                    return_surrogate_TE_values = true,
+                )
+
                 sort!(surrogates)
                 println(
                     "surrogate ",
