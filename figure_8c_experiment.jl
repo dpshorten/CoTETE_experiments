@@ -8,14 +8,14 @@ using StatsBase: sample
 using CoTETE
 #include("GLM_generative.jl")
 
-d_x = 2
-d_c = 2
-d_y = 2
+l_x = 1
+l_z = [1, 1, 1, 1]
+l_y = 1
 
 K = 10
 
 START_OFFSET = 200
-TARGET_TRAIN_LENGTH = Int(2e3)
+TARGET_TRAIN_LENGTH = Int(1e3)
 #TARGET_TRAIN_LENGTH = Int(1e4)
 METRIC = Cityblock()
 NUM_SAMPLES_RATIO = 1.0
@@ -25,20 +25,9 @@ K_PERM = 5
 #NUM_SURROGATES = 100
 NUM_SURROGATES = 20
 
-FOLDERS = ["stg_spike_files/"]
+FOLDER = "stg_spike_files/"
 
 h5open("figure_8c.h5", "w") do file
-    f = open("out", "w")
-    for folder in FOLDERS
-        for j = 1:10
-            println("*** ", j, " ***")
-            println(folder)
-            println()
-            for permutation in collect(permutations(["abpd", "lp", "py"]))
-                #for permutation in [["abpd", "py", "lp"], ["py", "abpd", "lp"]]
-                #for permutation in [["abpd", "lp", "py"], ["lp", "abpd", "py"]]
-                #for permutation in [["abpd", "lp", "py"], ["lp", "abpd", "py"], ["abpd", "py", "lp"], ["py", "abpd", "lp"]]
-
                 target_events = read(string(folder, permutation[1], "_", j, ".dat"))
                 conditioning_events = read(string(folder, permutation[2], "_", j, ".dat"))
                 source_events = read(string(folder, permutation[3], "_", j, ".dat"))
@@ -104,7 +93,5 @@ h5open("figure_8c.h5", "w") do file
                 g["num_target_events"] = TARGET_TRAIN_LENGTH
                 g["source"] = permutation[3]
                 g["target"] = permutation[1]
-            end
-        end
     end
 end
