@@ -8,29 +8,29 @@ using CoTETE
 #include("GLM_generative.jl")
 
 l_x = 1
-l_z = [1, 1, 1, 1, 1, 1, 1, 1]
+l_z = [1, 1, 1, 1]
 l_y = 1
 
-K = 5
+K = 10
 
-START_OFFSET = 200
+START_OFFSET = 100
 TARGET_TRAIN_LENGTH = Int(2e3)
 #TARGET_TRAIN_LENGTH = Int(1e4)
 METRIC = Cityblock()
 NUM_SAMPLES_RATIO = 1.0
 SURROGATE_UPSAMPLE_RATIO = 1.0
-K_PERM = 5
+K_PERM = 10
 
 #NUM_SURROGATES = 100
 NUM_SURROGATES = 100
 
-FOLDER = "outputs_rev_exp/"
+FOLDER = "outputs_rev_exp_corr/"
 
 h5open("figure_8c.h5", "w") do file
     target_events = read(string(FOLDER, "x_12.dat"))
     source_events = read(string(FOLDER, "y_12.dat"))
     array_of_conditioning_events = []
-    for i = 1:8
+    for i = 1:4
         temp = read(string(FOLDER, "z_12_n_", i,".dat"))
         push!(array_of_conditioning_events, temp)
     end
@@ -71,6 +71,7 @@ h5open("figure_8c.h5", "w") do file
     println(p)
 
     println(TE)
+    sort!(surrogates)
     println(surrogates)
 
     # g = g_create(file, string(j, "_link_", permutation[3], permutation[1], folder))
