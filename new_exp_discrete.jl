@@ -8,12 +8,12 @@ NUM_SURROGATES = 100
 #TARGET_TRAIN_LENGTH = Int(5e4)
 TARGET_TRAIN_LENGTH = Int(1e3)
 
-DT = 0.004
+DT = 0.008
 #MAX_LAG = 20
 #MAX_LAG = 5
-d_x = 4
-d_y = 4
-d_c = [4, 4, 4, 4]
+d_x = 2
+d_y = 2
+d_c = [2, 2, 2, 2, 2, 2, 2, 2]
 
 FOLDER = "outputs_rev_exp_corr/"
 
@@ -21,7 +21,7 @@ h5open("figure_8c.h5", "w") do file
     target_events = read(string(FOLDER, "x_11.dat"))
     source_events = read(string(FOLDER, "y_11.dat"))
     array_of_conditioning_events = []
-    for i = 1:4
+    for i = 1:8
         temp = read(string(FOLDER, "z_1_n_", i, ".dat"))
         push!(array_of_conditioning_events, temp)
     end
