@@ -8,17 +8,17 @@ using CoTETE
 #include("GLM_generative.jl")
 
 l_x = 1
-l_z = [1, 1, 1, 1]
+l_z = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 l_y = 1
 
-K = 10
+K = 5
 
 START_OFFSET = 100
 TARGET_TRAIN_LENGTH = Int(2e3)
 #TARGET_TRAIN_LENGTH = Int(1e4)
 METRIC = Cityblock()
 NUM_SAMPLES_RATIO = 1.0
-SURROGATE_UPSAMPLE_RATIO = 2.0
+SURROGATE_UPSAMPLE_RATIO = 1.0
 K_PERM = 10
 
 #NUM_SURROGATES = 100
@@ -26,12 +26,14 @@ NUM_SURROGATES = 100
 
 FOLDER = "outputs_rev_exp_corr/"
 
+FILE_INDEX = ARGS[1]
+
 h5open("figure_8c.h5", "w") do file
-    target_events = read(string(FOLDER, "x_12.dat"))
-    source_events = read(string(FOLDER, "y_12.dat"))
+    target_events = read(string(FOLDER, "x_", FILE_INDEX, ".dat"))
+    source_events = read(string(FOLDER, "y_", FILE_INDEX, ".dat"))
     array_of_conditioning_events = []
-    for i = 1:4
-        temp = read(string(FOLDER, "z_12_n_", i,".dat"))
+    for i = 1:12
+        temp = read(string(FOLDER, "z_", FILE_INDEX, "_n_", i, ".dat"))
         push!(array_of_conditioning_events, temp)
     end
 

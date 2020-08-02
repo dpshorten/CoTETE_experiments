@@ -13,16 +13,18 @@ DT = 0.008
 #MAX_LAG = 5
 d_x = 2
 d_y = 2
-d_c = [2, 2, 2, 2, 2, 2, 2, 2]
+d_c = [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2]
 
 FOLDER = "outputs_rev_exp_corr/"
 
+FILE_INDEX=1
+
 h5open("figure_8c.h5", "w") do file
-    target_events = read(string(FOLDER, "x_11.dat"))
-    source_events = read(string(FOLDER, "y_11.dat"))
+    target_events = read(string(FOLDER, "x_", FILE_INDEX, ".dat"))
+    source_events = read(string(FOLDER, "y_", FILE_INDEX, ".dat"))
     array_of_conditioning_events = []
-    for i = 1:8
-        temp = read(string(FOLDER, "z_1_n_", i, ".dat"))
+    for i = 1:12
+        temp = read(string(FOLDER, "z_", FILE_INDEX, "_n_", i, ".dat"))
         push!(array_of_conditioning_events, temp)
     end
 
