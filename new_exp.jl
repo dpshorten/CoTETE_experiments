@@ -5,84 +5,101 @@ using Random: rand, randn
 using StatsBase: sample
 
 using CoTETE
-#include("GLM_generative.jl")
 
 l_x = 1
-l_z = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+#l_z = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 l_y = 1
 
 K = 5
 
+SIM_DT = 1e-4
+
 START_OFFSET = 100
-TARGET_TRAIN_LENGTH = Int(2e3)
+TARGET_TRAIN_LENGTHS = [Int(1e2), Int(5e2), Int(1e3)]
 #TARGET_TRAIN_LENGTH = Int(1e4)
 METRIC = Cityblock()
 NUM_SAMPLES_RATIO = 1.0
 SURROGATE_UPSAMPLE_RATIO = 1.0
 K_PERM = 10
 
+NET_SIZES = [0, 1, 2]
+CONDITIONING_SIZE = [8, 16, 24]
+EXTRA_TYPES = ["exc", "inh", "fake"]
+
 #NUM_SURROGATES = 100
 NUM_SURROGATES = 100
 
-FOLDER = "outputs_rev_exp_corr/"
+INPUT_FOLDER = "outputs_rev_exp/"
 
-FILE_INDEX = ARGS[1]
+h5open(string("uncorrelated_pop/run_", ARGS[1], ".h5"), "w") do file
+    for net_size in NET_SIZES
+        for extra_type in EXTRA_TYPES
+            for target_length in TARGET_TRAIN_LENGTHS
 
-h5open("figure_8c.h5", "w") do file
-    target_events = read(string(FOLDER, "x_", FILE_INDEX, ".dat"))
-    source_events = read(string(FOLDER, "y_", FILE_INDEX, ".dat"))
-    array_of_conditioning_events = []
-    for i = 1:12
-        temp = read(string(FOLDER, "z_", FILE_INDEX, "_n_", i, ".dat"))
-        push!(array_of_conditioning_events, temp)
+                l_z = ones(CONDITIONING_SIZE[net_size + 1])
+
+                prefix = string(INPUT_FOLDER, "type_", extra_type, "_size_", net_size, "_net_", ARGS[1])
+
+                target_events = read(string(prefix, "_x_", ".dat"))
+                source_events = read(string(prefix, "_y_", ".dat"))
+                array_of_conditioning_events = []
+                for i = 1:CONDITIONING_SIZE[net_size + 1]
+                    temp = read(string(prefix, "_z__n_", i, ".dat"))
+                    push!(array_of_conditioning_events, temp)
+                end
+
+                convert(Matrix, target_events)
+                target_events = target_events[:, 1]
+                target_events += SIM_DT .* rand(size(target_events, 1)) .- 0.5 * SIM_DT
+                convert(Matrix, source_events)
+                source_events = source_events[:, 1]
+                source_events += SIM_DT .* rand(size(source_events, 1)) .- 0.5 * SIM_DT
+
+                new_cond = Array{Float32,1}[]
+                for events in array_of_conditioning_events
+                    convert(Matrix, events)
+                    events = events[:, 1]
+                    convert(Array{Float32,1}, events)
+                    events += SIM_DT .* rand(size(events, 1)) .- 0.5 * SIM_DT
+                    push!(new_cond, events)
+                end
+
+                parameters = CoTETE.CoTETEParameters(
+                    l_x = l_x,
+                    l_y = l_y,
+                    l_z = l_z,
+                    auto_find_start_and_num_events = false,
+                    start_event = START_OFFSET,
+                    num_target_events = target_length,
+                    num_samples_ratio = NUM_SAMPLES_RATIO,
+                    k_global = K,
+                    num_surrogates = NUM_SURROGATES,
+                )
+
+                TE, p, surrogates = CoTETE.estimate_TE_and_p_value_from_event_times(
+                    parameters,
+                    target_events,
+                    source_events,
+                    conditioning_events = new_cond,
+                    return_surrogate_TE_values = true,
+                )
+
+                println(extra_type, " ", net_size, " ", target_length)
+
+                println(p)
+
+                println(TE)
+                sort!(surrogates)
+                #println(surrogates)
+
+                g = g_create(file, string(net_size, extra_type, target_length))
+                g["TE"] = TE
+                surrogates = Array{Float32}(surrogates)
+                g["p"] = p
+                g["net_size"] = net_size
+                g["extra_type"] = extra_type
+                g["target_length"] = target_length
+            end
+        end
     end
-
-    convert(Matrix, target_events)
-    target_events = target_events[:, 1]
-    convert(Matrix, source_events)
-    source_events = source_events[:, 1]
-
-    new_cond = Array{Float32, 1}[]
-    for events in array_of_conditioning_events
-        convert(Matrix, events)
-        events = events[:, 1]
-        convert(Array{Float32, 1}, events)
-        push!(new_cond, events)
-    end
-
-    parameters = CoTETE.CoTETEParameters(
-        l_x = l_x,
-        l_y = l_y,
-        l_z = l_z,
-        auto_find_start_and_num_events = false,
-        start_event = START_OFFSET,
-        num_target_events = TARGET_TRAIN_LENGTH,
-        num_samples_ratio = NUM_SAMPLES_RATIO,
-        k_global = K,
-        num_surrogates = NUM_SURROGATES,
-    )
-
-    TE, p, surrogates = CoTETE.estimate_TE_and_p_value_from_event_times(
-        parameters,
-        target_events,
-        source_events,
-        conditioning_events = new_cond,
-        return_surrogate_TE_values = true,
-    )
-
-    println(p)
-
-    println(TE)
-    sort!(surrogates)
-    println(surrogates)
-
-    # g = g_create(file, string(j, "_link_", permutation[3], permutation[1], folder))
-    # g["TE"] = TE
-    # g["folder"] = folder
-    # surrogates = Array{Float32}(surrogates)
-    # g["run"] = j
-    # g["surrogates"] = surrogates
-    # g["num_target_events"] = TARGET_TRAIN_LENGTH
-    # g["source"] = permutation[3]
-    # g["target"] = permutation[1]
 end
