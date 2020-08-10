@@ -7,7 +7,6 @@ using StatsBase: sample
 using CoTETE
 
 l_x = 1
-#l_z = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 l_y = 1
 
 K = 5
@@ -15,7 +14,7 @@ K = 5
 SIM_DT = 1e-4
 
 START_OFFSET = 100
-TARGET_TRAIN_LENGTHS = [Int(1e2), Int(5e2), Int(1e3)]
+TARGET_TRAIN_LENGTHS = [Int(1e2), Int(5e2), Int(1e3), Int(5e3)]
 #TARGET_TRAIN_LENGTH = Int(1e4)
 METRIC = Cityblock()
 NUM_SAMPLES_RATIO = 1.0
@@ -26,12 +25,11 @@ NET_SIZES = [0, 1, 2]
 CONDITIONING_SIZE = [8, 16, 24]
 EXTRA_TYPES = ["exc", "inh", "fake"]
 
-#NUM_SURROGATES = 100
 NUM_SURROGATES = 100
 
-INPUT_FOLDER = "outputs_rev_exp/"
+INPUT_FOLDER = "outputs_rev_exp_corr/"
 
-h5open(string("uncorrelated_pop/run_", ARGS[1], ".h5"), "w") do file
+h5open(string("correlated_pop/run_", ARGS[1], ".h5"), "w") do file
     for net_size in NET_SIZES
         for extra_type in EXTRA_TYPES
             for target_length in TARGET_TRAIN_LENGTHS

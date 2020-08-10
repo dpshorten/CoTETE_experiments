@@ -28,7 +28,7 @@ fake_p = np.zeros((NUM_RUNS, len(SIZES), len(TARGET_TRAIN_LENGTHS)))
 
 for i in range(NUM_RUNS):
 
-    data_file = h5py.File("uncorrelated_pop/run_" + str(i + 1) + ".h5", "r")
+    data_file = h5py.File("correlated_pop/run_" + str(i + 1) + ".h5", "r")
 
     for key in data_file.keys():
         p = data_file[key]["p"].value
@@ -55,7 +55,7 @@ fake_p = np.sum(fake_p, axis = 0)/NUM_RUNS
 
 sns.heatmap(exc_p, vmin = 0, vmax = 1)
 plt.title("Excitatory true positive rate")
-plt.xticks(ticks = [0, 1, 2], labels = TARGET_TRAIN_LENGTHS)
+plt.xticks(ticks = list(range(len(TARGET_TRAIN_LENGTHS))), labels = TARGET_TRAIN_LENGTHS)
 plt.yticks(ticks = [0, 1, 2], labels = SIZES)
 plt.xlabel("num target spikes")
 plt.ylabel("num conditioning processes")
@@ -63,7 +63,7 @@ plt.show()
 
 sns.heatmap(inh_p, vmin = 0, vmax = 1)
 plt.title("Inhibitory true positive rate")
-plt.xticks(ticks = [0, 1, 2], labels = TARGET_TRAIN_LENGTHS)
+plt.xticks(ticks = list(range(len(TARGET_TRAIN_LENGTHS))), labels = TARGET_TRAIN_LENGTHS)
 plt.yticks(ticks = [0, 1, 2], labels = SIZES)
 plt.xlabel("num target spikes")
 plt.ylabel("num conditioning processes")
@@ -71,7 +71,7 @@ plt.show()
 
 sns.heatmap(fake_p, vmin = 0, vmax = 1)
 plt.title("True negative rate")
-plt.xticks(ticks = [0, 1, 2], labels = TARGET_TRAIN_LENGTHS)
+plt.xticks(ticks = list(range(len(TARGET_TRAIN_LENGTHS))), labels = TARGET_TRAIN_LENGTHS)
 plt.yticks(ticks = [0, 1, 2], labels = SIZES)
 plt.xlabel("num target spikes")
 plt.ylabel("num conditioning processes")
