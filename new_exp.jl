@@ -1,4 +1,5 @@
-using CSV: read
+using CSV: File, read
+using DataFrames
 using HDF5: h5open, g_create
 using Distances: Cityblock, Chebyshev, Euclidean
 using Random: rand, randn
@@ -14,7 +15,7 @@ K = 5
 SIM_DT = 1e-4
 
 START_OFFSET = 100
-TARGET_TRAIN_LENGTHS = [Int(1e2), Int(5e2), Int(1e3), Int(5e3)]
+TARGET_TRAIN_LENGTHS = [Int(1e2), Int(5e2), Int(1e3)]
 #TARGET_TRAIN_LENGTH = Int(1e4)
 METRIC = Cityblock()
 NUM_SAMPLES_RATIO = 1.0
@@ -22,7 +23,7 @@ SURROGATE_UPSAMPLE_RATIO = 1.0
 K_PERM = 10
 
 NET_SIZES = [0, 1, 2]
-CONDITIONING_SIZE = [8, 16, 24]
+CONDITIONING_SIZE = [6, 12, 18]
 EXTRA_TYPES = ["exc", "inh", "fake"]
 
 NUM_SURROGATES = 100
@@ -38,11 +39,12 @@ h5open(string("correlated_pop/run_", ARGS[1], ".h5"), "w") do file
 
                 prefix = string(INPUT_FOLDER, "type_", extra_type, "_size_", net_size, "_net_", ARGS[1])
 
-                target_events = read(string(prefix, "_x_", ".dat"))
-                source_events = read(string(prefix, "_y_", ".dat"))
+                target_events = DataFrame!(File((string(prefix, "_x_", ".dat"))))
+                #target_events = read(string(prefix, "_x_", ".dat"))
+                source_events = DataFrame!(File((string(prefix, "_y_", ".dat"))))
                 array_of_conditioning_events = []
                 for i = 1:CONDITIONING_SIZE[net_size + 1]
-                    temp = read(string(prefix, "_z__n_", i, ".dat"))
+                    temp = DataFrame!(File((string(prefix, "_z__n_", i, ".dat"))))
                     push!(array_of_conditioning_events, temp)
                 end
 
