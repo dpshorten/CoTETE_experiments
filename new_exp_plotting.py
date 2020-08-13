@@ -20,7 +20,7 @@ rc('text.latex', preamble=r'\usepackage{cmbright}')
 
 NUM_RUNS = 30
 SIZES = [8, 16, 24]
-TARGET_TRAIN_LENGTHS = [int(1e2), int(5e2), int(1e3)]
+TARGET_TRAIN_LENGTHS = [int(1e2), int(5e2), int(1e3), int(5e3)]
 
 exc_p = np.zeros((NUM_RUNS, len(SIZES), len(TARGET_TRAIN_LENGTHS)))
 inh_p = np.zeros((NUM_RUNS, len(SIZES), len(TARGET_TRAIN_LENGTHS)))

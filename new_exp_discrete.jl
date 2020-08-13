@@ -7,12 +7,13 @@ SIM_DT = 1e-4
 DT = [8e-3, 1.6e-2, 1.6e-2]
 
 START_OFFSET = 100
-TARGET_TRAIN_LENGTHS = [Int(1e2), Int(5e2), Int(1e3)]
+TARGET_TRAIN_LENGTHS = [Int(1e2), Int(5e2), Int(1e3), Int(5e3)]
 #TARGET_TRAIN_LENGTH = Int(1e4)
 
 NET_SIZES = [0, 1, 2]
 CONDITIONING_SIZE = [6, 12, 18]
-EXTRA_TYPES = ["exc", "inh", "fake"]
+EXTRA_TYPES = ["inh", "fake"]
+#EXTRA_TYPES = ["fake"]
 
 NUM_SURROGATES = 100
 
