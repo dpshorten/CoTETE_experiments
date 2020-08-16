@@ -20,7 +20,7 @@ rc('text.latex', preamble=r'\usepackage{cmbright}')
 
 NUM_RUNS = 30
 SIZES = [8, 16, 24]
-TARGET_TRAIN_LENGTHS = [int(1e2), int(5e2), int(1e3)]
+TARGET_TRAIN_LENGTHS = [int(1e2), int(5e2), int(1e3), int(2e3), int(5e3)]
 
 exc_p = np.zeros((NUM_RUNS, len(SIZES), len(TARGET_TRAIN_LENGTHS)))
 inh_p = np.zeros((NUM_RUNS, len(SIZES), len(TARGET_TRAIN_LENGTHS)))
@@ -29,11 +29,11 @@ fake_corr_p = np.zeros((NUM_RUNS, len(SIZES), len(TARGET_TRAIN_LENGTHS)))
 
 for i in range(NUM_RUNS):
 
-    data_file = h5py.File("correlated_pop/run_" + str(i + 1) + ".h5", "r")
+    data_file = h5py.File("correlated_pop_discrete/run_" + str(i + 1) + ".h5", "r")
 
     for key in data_file.keys():
         p = data_file[key]["p"].value
-        net_size_index = data_file[key]["net_size"].value
+        net_size_index = len(SIZES) - data_file[key]["net_size"].value - 1
         extra_type = str(data_file[key]["extra_type"].value)[2:-1]
         target_length = data_file[key]["target_length"].value
         target_length_index = TARGET_TRAIN_LENGTHS.index(target_length)
@@ -58,34 +58,16 @@ fake_p = np.sum(fake_p, axis = 0)/NUM_RUNS
 fake_corr_p = np.sum(fake_corr_p, axis = 0)/NUM_RUNS
 
 
-sns.heatmap(exc_p, vmin = 0, vmax = 1)
-plt.title("Excitatory true positive rate")
-plt.xticks(ticks = list(range(len(TARGET_TRAIN_LENGTHS))), labels = TARGET_TRAIN_LENGTHS)
-plt.yticks(ticks = [0, 1, 2], labels = SIZES)
-plt.xlabel("num target spikes")
-plt.ylabel("num conditioning processes")
-plt.show()
+def make_heatmap(title, p_vals):
+    sns.heatmap(p_vals, vmin = 0, vmax = 1)
+    plt.title(title)
+    plt.xticks(ticks = np.arange(len(TARGET_TRAIN_LENGTHS)) + 0.5, labels = TARGET_TRAIN_LENGTHS)
+    plt.yticks(ticks = np.flip(np.arange(3) + 0.5), labels = SIZES)
+    plt.xlabel("num target spikes")
+    plt.ylabel("num conditioning processes")
+    plt.show()
 
-sns.heatmap(inh_p, vmin = 0, vmax = 1)
-plt.title("Inhibitory true positive rate")
-plt.xticks(ticks = list(range(len(TARGET_TRAIN_LENGTHS))), labels = TARGET_TRAIN_LENGTHS)
-plt.yticks(ticks = [0, 1, 2], labels = SIZES)
-plt.xlabel("num target spikes")
-plt.ylabel("num conditioning processes")
-plt.show()
-
-sns.heatmap(fake_p, vmin = 0, vmax = 1)
-plt.title("True negative rate")
-plt.xticks(ticks = list(range(len(TARGET_TRAIN_LENGTHS))), labels = TARGET_TRAIN_LENGTHS)
-plt.yticks(ticks = [0, 1, 2], labels = SIZES)
-plt.xlabel("num target spikes")
-plt.ylabel("num conditioning processes")
-plt.show()
-
-sns.heatmap(fake_corr_p, vmin = 0, vmax = 1)
-plt.title("True negative rate")
-plt.xticks(ticks = list(range(len(TARGET_TRAIN_LENGTHS))), labels = TARGET_TRAIN_LENGTHS)
-plt.yticks(ticks = [0, 1, 2], labels = SIZES)
-plt.xlabel("num target spikes")
-plt.ylabel("num conditioning processes")
-plt.show()
+make_heatmap("Excitatory true positive rate", exc_p)
+make_heatmap("Inhibitory true positive rate", inh_p)
+make_heatmap("Uncorrelated true negative rate", fake_p)
+make_heatmap("Correlated true negative rate", fake_corr_p)

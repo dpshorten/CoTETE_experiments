@@ -1,4 +1,7 @@
 include("discretisation_testing.jl")
+using CSV: File, read
+using DataFrames
+using HDF5: h5open, g_create
 
 d_x = [2, 1, 1]
 d_y = [2, 1, 1]
@@ -7,12 +10,13 @@ SIM_DT = 1e-4
 DT = [8e-3, 1.6e-2, 1.6e-2]
 
 START_OFFSET = 100
-TARGET_TRAIN_LENGTHS = [Int(1e2), Int(5e2), Int(1e3)]
+TARGET_TRAIN_LENGTHS = [Int(1e2), Int(5e2), Int(1e3), Int(2e3)]
 #TARGET_TRAIN_LENGTH = Int(1e4)
 
 NET_SIZES = [0, 1, 2]
 CONDITIONING_SIZE = [6, 12, 18]
-EXTRA_TYPES = ["exc", "inh", "fake", "fake_corr"]
+#EXTRA_TYPES = ["exc", "inh", "fake", "fake_corr"]
+EXTRA_TYPES = ["fake_corr"]
 #EXTRA_TYPES = ["fake"]
 
 NUM_SURROGATES = 100
@@ -29,11 +33,11 @@ h5open(string("correlated_pop_discrete/run_", ARGS[1], ".h5"), "w") do file
                 prefix =
                     string(INPUT_FOLDER, "type_", extra_type, "_size_", net_size, "_net_", ARGS[1])
 
-                target_events = read(string(prefix, "_x_", ".dat"))
-                source_events = read(string(prefix, "_y_", ".dat"))
+                target_events = DataFrame!(File(string(prefix, "_x_", ".dat")))
+                source_events = DataFrame!(File(string(prefix, "_y_", ".dat")))
                 array_of_conditioning_events = []
                 for i = 1:CONDITIONING_SIZE[net_size+1]
-                    temp = read(string(prefix, "_z__n_", i, ".dat"))
+                    temp = DataFrame!(File(string(prefix, "_z__n_", i, ".dat")))
                     push!(array_of_conditioning_events, temp)
                 end
 
@@ -92,22 +96,21 @@ h5open(string("correlated_pop_discrete/run_", ARGS[1], ".h5"), "w") do file
                 println(extra_type, " ", net_size, " ", target_length)
                 println("TE ", TE)
                 #println("surrogate ", surrogate_vals[1], surrogate_vals[90], surrogate_vals[end])
+                p = 1 - (searchsortedfirst(surrogate_vals, TE) - 1) / length(surrogate_vals)
                 println(
                     "p ",
-                    1 - (searchsortedfirst(surrogate_vals, TE) - 1) / length(surrogate_vals),
+                    p
                 )
                 #println(surrogate_vals)
                 println()
 
-                # g = g_create(file, string(j, "_link_", permutation[3], permutation[1], folder))
-                # g["TE"] = TE
-                # g["folder"] = folder
-                # surrogates = Array{Float32}(surrogate_vals)
-                # g["run"] = j
-                # g["surrogates"] = surrogates
-                # g["num_target_events"] = TARGET_TRAIN_LENGTH
-                # g["source"] = permutation[3]
-                # g["target"] = permutation[1]
+                g = g_create(file, string(net_size, extra_type, target_length))
+                g["TE"] = TE
+                surrogates = Array{Float32}(surrogate_vals)
+                g["p"] = p
+                g["net_size"] = net_size
+                g["extra_type"] = extra_type
+                g["target_length"] = target_length
             end
         end
     end
