@@ -15,7 +15,8 @@ K = 5
 SIM_DT = 1e-4
 
 START_OFFSET = 100
-TARGET_TRAIN_LENGTHS = [Int(1e2), Int(5e2), Int(1e3), Int(2e3)]
+#TARGET_TRAIN_LENGTHS = [Int(1e2), Int(5e2), Int(1e3), Int(2e3)]
+TARGET_TRAIN_LENGTHS = [Int(5e2), Int(1e3), Int(2e3), Int(5e3)]
 #TARGET_TRAIN_LENGTH = Int(1e4)
 METRIC = Cityblock()
 NUM_SAMPLES_RATIO = 1.0
@@ -25,7 +26,8 @@ K_PERM = 10
 NET_SIZES = [0, 1, 2]
 CONDITIONING_SIZE = [6, 12, 18]
 #EXTRA_TYPES = ["exc", "inh", "fake", "fake_corr"]
-EXTRA_TYPES = ["fake_corr"]
+EXTRA_TYPES = ["exc", "inh"]
+#EXTRA_TYPES = ["inh"]
 
 NUM_SURROGATES = 100
 
@@ -91,6 +93,7 @@ h5open(string("correlated_pop/run_", ARGS[1], ".h5"), "w") do file
 
                 println(TE)
                 sort!(surrogates)
+                println()
                 #println(surrogates)
 
                 g = g_create(file, string(net_size, extra_type, target_length))
