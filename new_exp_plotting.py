@@ -20,7 +20,7 @@ rc('text.latex', preamble=r'\usepackage{cmbright}')
 
 NUM_RUNS = 30
 SIZES = [8, 16, 24]
-TARGET_TRAIN_LENGTHS = [int(1e2), int(5e2), int(1e3), int(2e3), int(5e3)]
+TARGET_TRAIN_LENGTHS = [int(1e2), int(5e2), int(1e3), int(2e3), int(5e3), int(1e4)]
 
 exc_p = np.zeros((NUM_RUNS, len(SIZES), len(TARGET_TRAIN_LENGTHS)))
 inh_p = np.zeros((NUM_RUNS, len(SIZES), len(TARGET_TRAIN_LENGTHS)))
@@ -50,8 +50,8 @@ for i in range(NUM_RUNS):
 #exc_p = np.mean(exc_p, axis = 0)
 exc_p = exc_p < 0.05
 inh_p = inh_p < 0.05
-fake_p = fake_p > 0.05
-fake_corr_p = fake_corr_p > 0.05
+fake_p = fake_p < 0.05
+fake_corr_p = fake_corr_p < 0.05
 exc_p = np.sum(exc_p, axis = 0)/NUM_RUNS
 inh_p = np.sum(inh_p, axis = 0)/NUM_RUNS
 fake_p = np.sum(fake_p, axis = 0)/NUM_RUNS
@@ -69,5 +69,5 @@ def make_heatmap(title, p_vals):
 
 make_heatmap("Excitatory true positive rate", exc_p)
 make_heatmap("Inhibitory true positive rate", inh_p)
-make_heatmap("Uncorrelated true negative rate", fake_p)
-make_heatmap("Correlated true negative rate", fake_corr_p)
+make_heatmap("Uncorrelated false positive rate", fake_p)
+make_heatmap("Correlated false positive rate", fake_corr_p)
