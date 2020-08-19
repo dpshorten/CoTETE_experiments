@@ -25,7 +25,7 @@ function estimate_TE_discrete(
     y_lag;
     c_lag = 0,
     conditioning_events = [[]],
-    d_c = [],
+    d_c = [0],
 )
 
     target_events = deepcopy(target_events)
@@ -44,7 +44,7 @@ function estimate_TE_discrete(
     source_end_event -= 1
     source_events = source_events[source_start_event:source_end_event]
 
-    if length(d_c) > 0
+    if d_c[1] != 0
         for i = 1:length(d_c)
             conditioning_start_event = 1
             #println(length(conditioning_events[i]))
@@ -79,7 +79,7 @@ function estimate_TE_discrete(
     end
 
     discretised_conditioning_events = []
-    if length(d_c) > 0
+    if d_c[1] != 0
         for i = 1:length(d_c)
             temp = zeros(Int8, Int(floor(conditioning_events[i][end] / delta_t)) + 1)
 
@@ -91,7 +91,7 @@ function estimate_TE_discrete(
     end
 
     final_index = 0
-    if length(d_c) > 0
+    if d_c[1] != 0 > 0
         conditioning_lengths = []
         for i = 1:length(d_c)
             push!(conditioning_lengths, size(discretised_conditioning_events[i], 1))
@@ -112,39 +112,44 @@ function estimate_TE_discrete(
     for i = start_index:final_index
         joint_history_representation[i-start_index+1, 1:d_x] =
             discretised_target_events[(i-d_x):(i-1)]
-        for j = 1:length(d_c)
-            joint_history_representation[
-                i-start_index+1,
-                (d_x+sum(d_c[1:(j-1)])+1):(d_x+sum(d_c[1:j])),
-            ] = discretised_conditioning_events[j][(i-d_c[j]-c_lag):(i-1-c_lag)]
+        if d_c[1] != 0 > 0
+            for j = 1:length(d_c)
+                joint_history_representation[
+                    i-start_index+1,
+                    (d_x+sum(d_c[1:(j-1)])+1):(d_x+sum(d_c[1:j])),
+                ] = discretised_conditioning_events[j][(i-d_c[j]-c_lag):(i-1-c_lag)]
+            end
         end
         joint_history_representation[i-start_index+1, (d_x+sum(d_c)+1):(d_x+sum(d_c)+d_y)] =
             discretised_source_events[(i-d_y-y_lag):(i-1-y_lag)]
         target_history_representation[i-start_index+1, 1:d_x] =
             discretised_target_events[(i-d_x):(i-1)]
-        for j = 1:length(d_c)
-            target_history_representation[
-                i-start_index+1,
-                (d_x+sum(d_c[1:(j-1)])+1):(d_x+sum(d_c[1:j])),
-            ] = discretised_conditioning_events[j][(i-d_c[j]-c_lag):(i-1-c_lag)]
+        if d_c[1] != 0 > 0
+            for j = 1:length(d_c)
+                target_history_representation[
+                    i-start_index+1,
+                    (d_x+sum(d_c[1:(j-1)])+1):(d_x+sum(d_c[1:j])),
+                ] = discretised_conditioning_events[j][(i-d_c[j]-c_lag):(i-1-c_lag)]
+            end
         end
     end
 
     discretised_target_events = discretised_target_events[start_index:final_index]
     discretised_source_events = discretised_source_events[start_index:final_index]
-    if length(d_c) > 0
+    if d_c[1] != 0 > 0
         for i = 1:length(d_c)
-            discretised_conditioning_events[i] = discretised_conditioning_events[i][start_index:final_index]
+            discretised_conditioning_events[i] =
+                discretised_conditioning_events[i][start_index:final_index]
         end
     end
 
     histogram_target = Dict()
     if d_x > 10
-        sizehint!(histogram_target, 2^(d_x + d_c - 3))
+        sizehint!(histogram_target, 2^(d_x + sum(d_c) - 3))
     end
     histogram_joint = Dict()
     if d_x + d_y > 10
-        sizehint!(histogram_joint, 2^(d_x + d_c + d_y - 3))
+        sizehint!(histogram_joint, 2^(d_x + sum(d_c) + d_y - 3))
     end
 
     for i = 1:size(discretised_target_events)[1]

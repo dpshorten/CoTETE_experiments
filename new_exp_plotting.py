@@ -29,7 +29,7 @@ fake_corr_p = np.zeros((NUM_RUNS, len(SIZES), len(TARGET_TRAIN_LENGTHS)))
 
 for i in range(NUM_RUNS):
 
-    data_file = h5py.File("correlated_pop_discrete/run_" + str(i + 1) + ".h5", "r")
+    data_file = h5py.File("correlated_pop_discrete_pairwise/run_" + str(i + 1) + ".h5", "r")
 
     for key in data_file.keys():
         p = data_file[key]["p"].value
