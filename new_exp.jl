@@ -16,7 +16,7 @@ SIM_DT = 1e-4
 
 START_OFFSET = 100
 #TARGET_TRAIN_LENGTHS = [Int(1e2), Int(5e2), Int(1e3), Int(2e3)]
-TARGET_TRAIN_LENGTHS = [Int(1e2), Int(5e2), Int(1e3), Int(2e3), Int(5e3), Int(1e4), Int(2e4), Int(5e4)]
+TARGET_TRAIN_LENGTHS = [Int(1e2), Int(5e2), Int(1e3), Int(2e3), Int(5e3), Int(1e4)]
 #TARGET_TRAIN_LENGTH = Int(1e4)
 METRIC = Cityblock()
 NUM_SAMPLES_RATIO = 1.0
@@ -25,9 +25,9 @@ K_PERM = 10
 
 NET_SIZES = [0, 1, 2]
 CONDITIONING_SIZE = [6, 12, 18]
-#EXTRA_TYPES = ["exc", "inh", "fake", "fake_corr"]
+EXTRA_TYPES = ["exc", "inh", "fake", "fake_corr"]
 #EXTRA_TYPES = ["exc", "inh"]
-EXTRA_TYPES = ["fake_corr"]
+#EXTRA_TYPES = ["fake_corr"]
 
 NUM_SURROGATES = 100
 
@@ -70,18 +70,21 @@ h5open(string("correlated_pop_pairwise/run_", ARGS[1], ".h5"), "w") do file
                 parameters = CoTETE.CoTETEParameters(
                     l_x = l_x,
                     l_y = l_y,
+                    #l_z = l_z,
                     auto_find_start_and_num_events = false,
                     start_event = START_OFFSET,
                     num_target_events = target_length,
                     num_samples_ratio = NUM_SAMPLES_RATIO,
                     k_global = K,
                     num_surrogates = NUM_SURROGATES,
+                    add_dummy_exclusion_windows = true,
                 )
 
                 TE, p, surrogates = CoTETE.estimate_TE_and_p_value_from_event_times(
                     parameters,
                     target_events,
                     source_events,
+                    #conditioning_events = new_cond,
                     return_surrogate_TE_values = true,
                 )
 

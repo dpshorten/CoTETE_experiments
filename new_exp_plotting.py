@@ -19,7 +19,7 @@ plt.rc('figure', titlesize=18)
 rc('text.latex', preamble=r'\usepackage{cmbright}')
 
 NUM_RUNS = 30
-SIZES = [8, 16, 24]
+SIZES = [6, 12, 18]
 TARGET_TRAIN_LENGTHS = [int(1e2), int(5e2), int(1e3), int(2e3), int(5e3), int(1e4)]
 
 exc_p = np.zeros((NUM_RUNS, len(SIZES), len(TARGET_TRAIN_LENGTHS)))
@@ -29,7 +29,7 @@ fake_corr_p = np.zeros((NUM_RUNS, len(SIZES), len(TARGET_TRAIN_LENGTHS)))
 
 for i in range(NUM_RUNS):
 
-    data_file = h5py.File("correlated_pop_discrete_pairwise/run_" + str(i + 1) + ".h5", "r")
+    data_file = h5py.File("correlated_pop_pairwise/run_" + str(i + 1) + ".h5", "r")
 
     for key in data_file.keys():
         p = data_file[key]["p"].value
@@ -58,16 +58,17 @@ fake_p = np.sum(fake_p, axis = 0)/NUM_RUNS
 fake_corr_p = np.sum(fake_corr_p, axis = 0)/NUM_RUNS
 
 
-def make_heatmap(title, p_vals):
+def make_heatmap(title, filename, p_vals):
     sns.heatmap(p_vals, vmin = 0, vmax = 1)
     plt.title(title)
     plt.xticks(ticks = np.arange(len(TARGET_TRAIN_LENGTHS)) + 0.5, labels = TARGET_TRAIN_LENGTHS)
     plt.yticks(ticks = np.flip(np.arange(3) + 0.5), labels = SIZES)
     plt.xlabel("num target spikes")
     plt.ylabel("num conditioning processes")
+    plt.savefig("figures/" + filename)
     plt.show()
 
-make_heatmap("Excitatory true positive rate", exc_p)
-make_heatmap("Inhibitory true positive rate", inh_p)
-make_heatmap("Uncorrelated false positive rate", fake_p)
-make_heatmap("Correlated false positive rate", fake_corr_p)
+make_heatmap("Excitatory true positive rate", "cont_exc", exc_p)
+make_heatmap("Inhibitory true positive rate", "cont_inh", inh_p)
+make_heatmap("Uncorrelated false positive rate", "cont_fake", fake_p)
+make_heatmap("Correlated false positive rate", "cont_fake_corr", fake_corr_p)
