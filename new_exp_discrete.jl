@@ -19,9 +19,9 @@ TARGET_TRAIN_LENGTHS = [Int(1e2), Int(5e2), Int(1e3), Int(2e3), Int(5e3), Int(1e
 
 NET_SIZES = [0, 1, 2]
 CONDITIONING_SIZE = [6, 12, 18]
-EXTRA_TYPES = ["exc", "inh", "fake"]
+#EXTRA_TYPES = ["exc", "inh", "fake"]
 #EXTRA_TYPES = ["fake_corr"]
-#EXTRA_TYPES = ["fake"]
+EXTRA_TYPES = ["fake"]
 
 NUM_SURROGATES = 100
 
@@ -88,8 +88,8 @@ h5open(string("correlated_pop_discrete_unison/run_", ARGS[1], ".h5"), "w") do fi
                         d_y[net_size + 1],
                         0;
                         c_lag = 0,
-                        #conditioning_events = array_of_conditioning_events,
-                        #d_c = d_c,
+                        conditioning_events = array_of_conditioning_events,
+                        d_c = d_c,
                     )
 
 
