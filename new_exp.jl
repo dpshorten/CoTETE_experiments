@@ -25,8 +25,8 @@ K_PERM = 10
 
 NET_SIZES = [0, 1, 2]
 CONDITIONING_SIZE = [6, 12, 18]
-EXTRA_TYPES = ["inh"]
-#EXTRA_TYPES = ["exc", "inh"]
+#EXTRA_TYPES = ["inh"]
+EXTRA_TYPES = ["exc", "inh", "fake"]
 #EXTRA_TYPES = ["fake_corr"]
 
 NUM_SURROGATES = 100

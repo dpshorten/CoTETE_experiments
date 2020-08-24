@@ -91,7 +91,7 @@ function estimate_TE_discrete(
     end
 
     final_index = 0
-    if d_c[1] != 0 > 0
+    if d_c[1] != 0
         conditioning_lengths = []
         for i = 1:length(d_c)
             push!(conditioning_lengths, size(discretised_conditioning_events[i], 1))
@@ -112,7 +112,7 @@ function estimate_TE_discrete(
     for i = start_index:final_index
         joint_history_representation[i-start_index+1, 1:d_x] =
             discretised_target_events[(i-d_x):(i-1)]
-        if d_c[1] != 0 > 0
+        if d_c[1] != 0
             for j = 1:length(d_c)
                 joint_history_representation[
                     i-start_index+1,
@@ -124,7 +124,7 @@ function estimate_TE_discrete(
             discretised_source_events[(i-d_y-y_lag):(i-1-y_lag)]
         target_history_representation[i-start_index+1, 1:d_x] =
             discretised_target_events[(i-d_x):(i-1)]
-        if d_c[1] != 0 > 0
+        if d_c[1] != 0
             for j = 1:length(d_c)
                 target_history_representation[
                     i-start_index+1,
@@ -136,7 +136,7 @@ function estimate_TE_discrete(
 
     discretised_target_events = discretised_target_events[start_index:final_index]
     discretised_source_events = discretised_source_events[start_index:final_index]
-    if d_c[1] != 0 > 0
+    if d_c[1] != 0
         for i = 1:length(d_c)
             discretised_conditioning_events[i] =
                 discretised_conditioning_events[i][start_index:final_index]

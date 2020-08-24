@@ -29,7 +29,7 @@ fake_corr_p = np.zeros((NUM_RUNS, len(SIZES), len(TARGET_TRAIN_LENGTHS)))
 
 for i in range(NUM_RUNS):
 
-    data_file = h5py.File("correlated_pop_pairwise/run_" + str(i + 1) + ".h5", "r")
+    data_file = h5py.File("correlated_pop_discrete_unison/run_" + str(i + 1) + ".h5", "r")
 
     for key in data_file.keys():
         p = data_file[key]["p"].value
@@ -42,8 +42,6 @@ for i in range(NUM_RUNS):
             exc_p[i, net_size_index, target_length_index] = p
         elif extra_type == "inh":
             inh_p[i, net_size_index, target_length_index] = p
-        elif extra_type == "fake_corr":
-            fake_corr_p[i, net_size_index, target_length_index] = p
         else:
             fake_p[i, net_size_index, target_length_index] = p
 
@@ -68,7 +66,6 @@ def make_heatmap(title, filename, p_vals):
     plt.savefig("figures/" + filename)
     plt.show()
 
-make_heatmap("Excitatory true positive rate", "cont_exc", exc_p)
-make_heatmap("Inhibitory true positive rate", "cont_inh", inh_p)
-make_heatmap("Uncorrelated false positive rate", "cont_fake", fake_p)
-make_heatmap("Correlated false positive rate", "cont_fake_corr", fake_corr_p)
+make_heatmap("Excitatory true positive rate", "disc_exc", exc_p)
+make_heatmap("Inhibitory true positive rate", "disc_inh", inh_p)
+make_heatmap("Uncorrelated false positive rate", "disc_fake", fake_p)
