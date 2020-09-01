@@ -29,7 +29,7 @@ fake_corr_p = np.zeros((NUM_RUNS, len(SIZES), len(TARGET_TRAIN_LENGTHS)))
 
 for i in range(NUM_RUNS):
 
-    data_file = h5py.File("correlated_pop_unison/run_" + str(i + 1) + ".h5", "r")
+    data_file = h5py.File("correlated_pop_unison_pairwise_auto/run_" + str(i + 1) + ".h5", "r")
 
     for key in data_file.keys():
         p = data_file[key]["p"].value
@@ -44,6 +44,8 @@ for i in range(NUM_RUNS):
             inh_p[i, net_size_index, target_length_index] = p
         else:
             fake_p[i, net_size_index, target_length_index] = p
+
+print(fake_p[:, 2, 3])
 
 #exc_p = np.mean(exc_p, axis = 0)
 exc_p = exc_p < 0.05
@@ -63,9 +65,9 @@ def make_heatmap(title, filename, p_vals):
     plt.yticks(ticks = np.flip(np.arange(3) + 0.5), labels = SIZES)
     plt.xlabel("num target spikes")
     plt.ylabel("num conditioning processes")
-    plt.savefig("figures/" + filename)
+    plt.savefig("figures/autorem_continuous_pair_correlated/" + filename)
     plt.show()
 
 make_heatmap("Excitatory true positive rate", "cont_exc", exc_p)
 make_heatmap("Inhibitory true positive rate", "cont_inh", inh_p)
-make_heatmap("Uncorrelated false positive rate", "cont_fake", fake_p)
+make_heatmap("False positive rate", "cont_fake", fake_p)

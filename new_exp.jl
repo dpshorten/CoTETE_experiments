@@ -10,17 +10,17 @@ using CoTETE
 l_x = 1
 l_y = 1
 
-K = 10
+K = 5
 
 SIM_DT = 1e-4
 
 START_OFFSET = 100
 #TARGET_TRAIN_LENGTHS = [Int(1e2), Int(5e2), Int(1e3), Int(2e3)]
-TARGET_TRAIN_LENGTHS = [Int(1e2), Int(5e2), Int(1e3), Int(2e3), Int(5e3)]
+TARGET_TRAIN_LENGTHS = [Int(1e2), Int(5e2), Int(1e3), Int(2e3), Int(5e3), Int(1e4)]
 #TARGET_TRAIN_LENGTH = Int(1e4)
 METRIC = Cityblock()
 NUM_SAMPLES_RATIO = 1.0
-SURROGATE_UPSAMPLE_RATIO = 4.0
+SURROGATE_UPSAMPLE_RATIO = 10.0
 K_PERM = 10
 
 NET_SIZES = [0, 1, 2]
@@ -32,9 +32,9 @@ EXTRA_TYPES = ["exc", "inh", "fake"]
 
 NUM_SURROGATES = 100
 
-INPUT_FOLDER = "outputs_rev_exp_corr_unison/"
+INPUT_FOLDER = "outputs_rev_exp_unison/"
 
-h5open(string("correlated_pop_unison/run_", ARGS[1], ".h5"), "w") do file
+h5open(string("uncorrelated_pop_unison_pairwise_auto/run_", ARGS[1], ".h5"), "w") do file
     for net_size in NET_SIZES
         for extra_type in EXTRA_TYPES
             for target_length in TARGET_TRAIN_LENGTHS
@@ -71,21 +71,24 @@ h5open(string("correlated_pop_unison/run_", ARGS[1], ".h5"), "w") do file
                 parameters = CoTETE.CoTETEParameters(
                     l_x = l_x,
                     l_y = l_y,
-                    l_z = l_z,
+                    #l_z = l_z,
                     auto_find_start_and_num_events = false,
                     start_event = START_OFFSET,
                     num_target_events = target_length,
                     num_samples_ratio = NUM_SAMPLES_RATIO,
                     k_global = K,
                     num_surrogates = NUM_SURROGATES,
-                    add_dummy_exclusion_windows = true,
+                    add_dummy_exclusion_windows = false,
+                    surrogate_num_samples_ratio = SURROGATE_UPSAMPLE_RATIO,
+                    k_perm = K_PERM,
+                    kraskov_noise_level = 1e-6,
                 )
 
                 TE, p, surrogates = CoTETE.estimate_TE_and_p_value_from_event_times(
                     parameters,
                     target_events,
                     source_events,
-                    conditioning_events = new_cond,
+                    #conditioning_events = new_cond,
                     return_surrogate_TE_values = true,
                 )
 

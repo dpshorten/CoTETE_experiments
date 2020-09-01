@@ -6,12 +6,16 @@ using HDF5: h5open, g_create
 #d_x = [3, 2, 1]
 #d_y = [3, 2, 1]
 
-d_x = [3, 2, 1]
-d_y = [3, 2, 1]
+#d_x = [3, 2, 1]
+#d_y = [3, 2, 1]
+
+d_x = [12, 12, 12]
+d_y = [12, 12, 12]
 
 SIM_DT = 1e-4
 #DT = [7.4e-3, 1.1e-2, 2.2e-2]
-DT = [8e-3, 1.1e-2, 2.2e-2]
+#DT = [8e-3, 1.1e-2, 2.2e-2]
+DT = [2e-3, 2e-3, 2e-3]
 
 START_OFFSET = 100
 TARGET_TRAIN_LENGTHS = [Int(1e2), Int(5e2), Int(1e3), Int(2e3), Int(5e3), Int(1e4)]
@@ -25,9 +29,9 @@ EXTRA_TYPES = ["fake"]
 
 NUM_SURROGATES = 100
 
-INPUT_FOLDER = "outputs_rev_exp_corr_unison/"
+INPUT_FOLDER = "outputs_rev_exp_unison/"
 
-h5open(string("correlated_pop_discrete_unison/run_", ARGS[1], ".h5"), "w") do file
+h5open(string("uncorrelated_pop_discrete_unison_pairwise/run_", ARGS[1], ".h5"), "w") do file
     for net_size in NET_SIZES
         for extra_type in EXTRA_TYPES
             for target_length in TARGET_TRAIN_LENGTHS
@@ -70,8 +74,8 @@ h5open(string("correlated_pop_discrete_unison/run_", ARGS[1], ".h5"), "w") do fi
                     d_y[net_size + 1],
                     0;
                     c_lag = 0,
-                    conditioning_events = array_of_conditioning_events,
-                    d_c = d_c,
+                    #conditioning_events = array_of_conditioning_events,
+                    #d_c = d_c,
                 )
 
                 surrogate_vals = zeros(NUM_SURROGATES)
@@ -88,8 +92,8 @@ h5open(string("correlated_pop_discrete_unison/run_", ARGS[1], ".h5"), "w") do fi
                         d_y[net_size + 1],
                         0;
                         c_lag = 0,
-                        conditioning_events = array_of_conditioning_events,
-                        d_c = d_c,
+                        #conditioning_events = array_of_conditioning_events,
+                        #d_c = d_c,
                     )
 
 
