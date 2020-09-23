@@ -12,8 +12,8 @@ MU = [0.5, 1, 2, 5]
 
 START_OFFSET = 5000
 #TARGET_TRAIN_LENGTHS = [Int(1e2), Int(1e3), Int(1e4), Int(1e5)]
-TARGET_TRAIN_LENGTHS = [Int(1e2), Int(1e3), Int(1e4)]
-REPETITIONS_PER_LENGTH = [100, 20, 20, 20]
+TARGET_TRAIN_LENGTHS = [Int(1e2), Int(1e3), Int(1e4), Int(1e5)]
+REPETITIONS_PER_LENGTH = [1000, 100, 20, 20]
 
 h5open(string("figure_2", ".h5"), "w") do file
 
@@ -27,7 +27,7 @@ h5open(string("figure_2", ".h5"), "w") do file
             -100 * ones((length(MU), length(TARGET_TRAIN_LENGTHS), maximum(REPETITIONS_PER_LENGTH)))
         mu_ind = 0
         for mu in MU
-            println("mu ", mu)
+            println("k ", k, "mu ", mu)
             mu_ind += 1
             for i = 1:length(TARGET_TRAIN_LENGTHS)
                 Threads.@threads for j = 1:REPETITIONS_PER_LENGTH[i]
