@@ -12,8 +12,8 @@ K = 10
 #REPEATS = 200
 REPEATS = 20
 START_OFFSET = 10000
-#TARGET_TRAIN_LENGTH = Int(5e4)
-TARGET_TRAIN_LENGTH = Int(1e4)
+TARGET_TRAIN_LENGTH = Int(5e4)
+#TARGET_TRAIN_LENGTH = Int(1e4)
 NUM_SAMPLES_RATIO = 1.0
 SURROGATE_UPSAMPLE_RATIO = 1.0
 K_PERM = 10
@@ -66,7 +66,7 @@ h5open(string("figure_6.h5"), "w") do file
             parameters = CoTETE.CoTETEParameters(
                 l_x = d_x,
                 l_y = d_y,
-                l_z = d_c,
+                l_z = [d_c],
                 auto_find_start_and_num_events = false,
                 start_event = START_OFFSET,
                 num_target_events = TARGET_TRAIN_LENGTH,
@@ -79,7 +79,7 @@ h5open(string("figure_6.h5"), "w") do file
                 parameters,
                 target_events,
                 shifted_source_events,
-                conditioning_events = conditioning_events,
+                conditioning_events = [conditioning_events],
                 return_surrogate_TE_values = true,
             )
             TE_vals[repeat, i] = TE
@@ -92,7 +92,7 @@ h5open(string("figure_6.h5"), "w") do file
                 parameters,
                 target_events,
                 shifted_shifted_source_events,
-                conditioning_events = conditioning_events,
+                conditioning_events = [conditioning_events],
             )
             TE_vals_shift_surrogate[repeat, i] = TE_shift_surrogate
         end

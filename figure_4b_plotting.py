@@ -27,7 +27,7 @@ for i in range(TE_vals.shape[2]):
 
     sns.lineplot(x = num_events, y = means, palette = "Set3", linewidth = 4, ax = axs[i])
     axs[i].fill_between(num_events, means - stds, means + stds, alpha = 0.5)
-    axs[i].hlines(0.5076, 0, num_events[-1])
+    axs[i].hlines(0.5076, 0, num_events[-1], color = "black", linewidth = 3)
 
     axs[i].set_xscale("log")
     axs[i].set_ylim([0, 1.8])

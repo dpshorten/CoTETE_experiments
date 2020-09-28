@@ -1,22 +1,12 @@
-import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
-import os
 import h5py
-import sklearn.metrics
-from matplotlib.ticker import FormatStrFormatter, LogFormatterSciNotation
 import seaborn as sns
-from matplotlib import rc
-rc('font',**{'family':'sans-serif','sans-serif':['Helvetica'],
-             'size' : 18})
 
-plt.rc('axes', titlesize=18)
-plt.rc('axes', labelsize=18)
-plt.rc('xtick', labelsize=14)
-plt.rc('ytick', labelsize=14)
-plt.rc('figure', titlesize=18)
 
-rc('text.latex', preamble=r'\usepackage{cmbright}')
+import plot_format
+
+plot_format.set_format()
 
 data_file = h5py.File("figure_4c.h5", "r")
 
@@ -26,7 +16,7 @@ for key in data_file.keys():
     dt = data_file[key]["dt"].value
     print(TE_vals.shape)
 
-    fig, axs = plt.subplots(nrows = TE_vals.shape[2], figsize = (6, 12))
+    fig, axs = plt.subplots(nrows = TE_vals.shape[2], figsize = (8, 15))
     plt.tight_layout()
     for i in range(TE_vals.shape[2]):
         means = []
@@ -39,9 +29,9 @@ for key in data_file.keys():
         means = np.array(means)
         stds = np.array(stds)
 
-        sns.lineplot(x = num_events, y = means, palette = "Set3", linewidth = 2, ax = axs[i])
+        sns.lineplot(x = num_events, y = means, palette = "Set3", linewidth = 4, ax = axs[i])
         axs[i].fill_between(num_events, means - stds, means + stds, alpha = 0.5)
-        axs[i].hlines(0.5076, 0, num_events[-1])
+        axs[i].hlines(0.5076, 0, num_events[-1], color = "black", linewidth = 3)
 
         axs[i].set_xscale("log")
         axs[i].set_ylim([0.0, 1.8])
@@ -56,6 +46,7 @@ for key in data_file.keys():
     axs[1].set_xlabel("")
     axs[2].set_xlabel("")
     axs[3].set_xlabel("Number of Target Events")
+    plt.subplots_adjust(hspace = 0.4)
 
-    plt.show()
-    plt.savefig("discrete_canonical", bbox_inches='tight')
+    #plt.show()
+    plt.savefig("discrete_canonical.pdf", bbox_inches='tight', format = "pdf")
