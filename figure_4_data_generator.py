@@ -4,7 +4,7 @@ import pickle
 import numpy as np
 
 RATE_Y = 1.0
-NUM_Y_eventS = 3e6
+NUM_Y_eventS = 3e7
 RATE_X_MAX = 10
 NUM_FILES = 1
 

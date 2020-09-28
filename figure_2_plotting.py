@@ -1,26 +1,10 @@
-import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
-import os
 import h5py
-import sklearn.metrics
-
 import seaborn as sns
+import plot_format
 
-from matplotlib import rc
-rc('font',**{'family':'sans-serif','sans-serif':['Helvetica'],
-             'size' : 18})
-
-plt.rc('axes', titlesize=26)
-plt.rc('axes', labelsize=26)
-plt.rc('xtick', labelsize=22)
-plt.rc('ytick', labelsize=22)
-plt.rc('figure', titlesize=26)
-plt.rc('axes', linewidth=3)
-plt.rc('xtick.major', width=3)
-plt.rc('xtick.minor', width=3)
-
-rc('text.latex', preamble=r'\usepackage{cmbright}')
+plot_format.set_format()
 
 data_file = h5py.File("figure_2.h5", "r")
 

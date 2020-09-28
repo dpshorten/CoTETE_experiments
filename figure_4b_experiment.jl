@@ -30,6 +30,7 @@ h5open("figure_4b.h5", "w") do file
         ones((length(d_x_VALS), length(TARGET_TRAIN_LENGTHS), maximum(REPETITIONS_PER_LENGTH)))
     for d_x in d_x_VALS
         for i = 1:length(TARGET_TRAIN_LENGTHS)
+            println(d_x, " ", i)
             Threads.@threads for j = 1:REPETITIONS_PER_LENGTH[i]
                 parameters = CoTETE.CoTETEParameters(
                     l_x = d_x,

@@ -2,8 +2,8 @@ include("discretisation_testing.jl")
 
 
 #TARGET_TRAIN_LENGTHS = [100, 1000, Int(1e4), Int(1e5), Int(1e6)]
-TARGET_TRAIN_LENGTHS = [100, 1000, Int(1e4)]
-REPETITIONS_PER_LENGTH = [100, 20, 20, 20, 20]
+TARGET_TRAIN_LENGTHS = [100, 1000, Int(1e4), Int(1e5), Int(1e6)]
+REPETITIONS_PER_LENGTH = [1000, 100, 20, 20, 20]
 DT_VALS = [1.0, 0.5, 0.2, 0.1]
 OFFSET = 200
 

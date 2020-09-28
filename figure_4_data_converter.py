@@ -1,6 +1,6 @@
 import pickle
 
-for k in range(5):
+for k in range(1):
     print(k)
 
     pickled_events_file = open("train_" + str(k + 1) + ".pkl", 'rb')
