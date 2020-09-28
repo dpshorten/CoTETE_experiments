@@ -10,7 +10,7 @@ d_c = 1
 K = 10
 
 #REPEATS = 200
-REPEATS = 20
+REPEATS = 50
 START_OFFSET = 10000
 TARGET_TRAIN_LENGTH = Int(5e4)
 #TARGET_TRAIN_LENGTH = Int(1e4)
@@ -31,10 +31,10 @@ BIG_SHIFT_BASE = 1
 
 h5open(string("figure_6.h5"), "w") do file
 
-    #shifts1 = collect(0:0.13:10)
-    shifts1 = collect(0:0.7:10)
-    #shifts2 = collect(-10:0.13:0)
-    shifts2 = collect(-10:0.7:0)
+    shifts1 = collect(0:0.13:10)
+    #shifts1 = collect(0:0.7:10)
+    shifts2 = collect(-10:0.13:0)
+    #shifts2 = collect(-10:0.7:0)
     shifts = vcat(shifts2, shifts1)
 
     TE_vals = zeros(REPEATS, size(shifts, 1))

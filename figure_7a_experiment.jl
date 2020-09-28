@@ -10,11 +10,11 @@ d_x = 1
 d_c = 1
 K = 10
 
-#REPEATS = 10
-REPEATS = 4
+REPEATS = 10
+#REPEATS = 4
 START_OFFSET = 10000
-#TARGET_TRAIN_LENGTH = Int(5e4)
-TARGET_TRAIN_LENGTH = Int(5e3)
+TARGET_TRAIN_LENGTH = Int(5e4)
+#TARGET_TRAIN_LENGTH = Int(5e3)
 NUM_SAMPLES_RATIO = 1.0
 SURROGATE_UPSAMPLE_RATIO = 1.0
 K_PERM = 10
@@ -69,7 +69,7 @@ h5open(string("figure_7a.h5"), "w") do file
                                 parameters = CoTETE.CoTETEParameters(
                                         l_x = d_x,
                                         l_y = d_y,
-                                        l_z = d_c,
+                                        l_z = [d_c],
                                         auto_find_start_and_num_events = false,
                                         start_event = START_OFFSET,
                                         num_target_events = TARGET_TRAIN_LENGTH,
@@ -78,11 +78,11 @@ h5open(string("figure_7a.h5"), "w") do file
                                         num_surrogates = NUM_SURROGATES,
                                 )
 
-                                TE, p, surrogates = CoTETE.estimate_TE_and_p_value_from_event_times(
+                                TE, p, surrogate_vals = CoTETE.estimate_TE_and_p_value_from_event_times(
                                         parameters,
                                         target_events,
                                         source_events,
-                                        conditioning_events = conditioning_events,
+                                        conditioning_events = [conditioning_events],
                                         return_surrogate_TE_values = true,
                                 )
 
