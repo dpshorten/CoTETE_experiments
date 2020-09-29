@@ -12,6 +12,8 @@ def set_format():
     plt.rc('axes', linewidth=3)
     plt.rc('xtick.major', width=3)
     plt.rc('xtick.minor', width=3)
+    plt.rc('ytick.major', width=3)
+    plt.rc('ytick.minor', width=3)
     plt.rc('legend', fontsize=18)
     plt.rc('legend', handlelength=0.5)
     plt.rc('legend', borderpad=0.15)

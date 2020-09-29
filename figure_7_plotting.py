@@ -9,7 +9,7 @@ plot_format.set_format()
 plt.rc('xtick', labelsize=16)
 
 
-data_file = h5py.File("figure_7b.h5", "r")
+data_file = h5py.File("figure_7a.h5", "r")
 #data_file = h5py.File("figure_7b.h5", "r")
 
 P_CUTOFF = 0.95
@@ -55,6 +55,8 @@ sns.boxplot(data = np.transpose(p_vals[:, :]), palette = "colorblind",
              linewidth = 4, width = 0.5, fliersize = 10)
 sns.stripplot(data = np.transpose(p_vals[:, :]), palette = "colorblind",
              linewidth = 3, size = 10)
+plt.hlines(0.05, -0.5, 3.5, color = "black", linewidth = 2, linestyle='--')
+plt.xlim([-0.5, 3.5])
 #plt.scatter(0, 0.93, s=1000, c='red', marker='$×$')
 plt.scatter(0, 0.93, s=1000, c='green', marker='$✓$')
 plt.scatter(1, 0.93, s=1000, c='green', marker='$✓$')
@@ -67,6 +69,6 @@ NAMES = ["$\\sigma_D \\! = \\! 7.5$e-2\nzero",
          "$\\sigma_D \\! = \\! 5$e-2\nnon-zero"]
 plt.xticks([0, 1, 2, 3], NAMES)
 
-plt.savefig("noisy_copy_inference_discrete"
+plt.savefig("noisy_copy_inference_continuous"
                 + ".pdf",
                 bbox_inches='tight', format = 'pdf')

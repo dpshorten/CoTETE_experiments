@@ -13,7 +13,7 @@ TE_vals = data_file[key]["TE"]
 num_events = data_file[key]["num_target_events"]
 d_x = data_file[key]["d_x"].value
 
-fig, axs = plt.subplots(nrows = TE_vals.shape[2], figsize = (6, 12))
+fig, axs = plt.subplots(nrows = TE_vals.shape[2], figsize = (8, 12))
 for i in range(TE_vals.shape[2]):
     means = []
     stds = []
@@ -25,9 +25,9 @@ for i in range(TE_vals.shape[2]):
     means = np.array(means)
     stds = np.array(stds)
 
-    sns.lineplot(x = num_events, y = means, palette = "Set3", linewidth = 4, ax = axs[i])
+    sns.lineplot(x = num_events, y = means, palette = "Set3", linewidth = 1, ax = axs[i])
     axs[i].fill_between(num_events, means - stds, means + stds, alpha = 0.5)
-    axs[i].hlines(0.5076, 0, num_events[-1], color = "black", linewidth = 3)
+    axs[i].hlines(0.5076, 0, num_events[-1], color = "black", linewidth = 1)
 
     axs[i].set_xscale("log")
     axs[i].set_ylim([0, 1.8])
@@ -40,4 +40,4 @@ axs[2].set_xlabel("Number of Target Events")
 plt.subplots_adjust(hspace = 0.25)
 
 #plt.show()
-plt.savefig("canonical_continuous_extra.pdf", bbox_inches='tight', format = "pdf")
+plt.savefig("canonical_continuous_long.pdf", bbox_inches='tight', format = "pdf")
