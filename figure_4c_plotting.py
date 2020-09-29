@@ -8,7 +8,9 @@ import plot_format
 
 plot_format.set_format()
 
-data_file = h5py.File("figure_4c.h5", "r")
+#data_file = h5py.File("figure_4c.h5", "r")
+data_file = h5py.File("extra_fine_discrete.h5", "r")
+
 
 key = "foo"
 TE_vals = data_file[key]["TE"]
@@ -49,4 +51,4 @@ axs[3].set_xlabel("Number of Target Events")
 plt.subplots_adjust(hspace = 0.4)
 
 #plt.show()
-plt.savefig("discrete_canonical.pdf", bbox_inches='tight', format = "pdf")
+plt.savefig("extra_fine_discrete.pdf", bbox_inches='tight', format = "pdf")

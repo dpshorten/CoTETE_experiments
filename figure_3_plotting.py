@@ -8,7 +8,7 @@ import plot_format
 
 plot_format.set_format()
 
-data_file = h5py.File("figure_3.h5", "r")
+data_file = h5py.File("extra_homog.h5", "r")
 
 for key in data_file.keys():
     TE_vals = data_file[key]["TE"]
@@ -34,10 +34,10 @@ for key in data_file.keys():
         axs[i].hlines(0.0, 0, num_events[-1], color = "black")
 
         axs[i].set_xscale("log")
-        if data_file[key]["HL"].value == 2:
-            axs[i].set_ylim([-0.01, 0.1])
-        else:
-            axs[i].set_ylim([-0.1, 1.1])
+        #if data_file[key]["HL"].value == 2:
+        #    axs[i].set_ylim([-0.01, 0.1])
+        #else:
+        axs[i].set_ylim([-0.5, 1.1])
         axs[i].set_title("$\Delta t$ = " + str(dt[i]))
         #axs[i].yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
         #axs[i].xaxis.set_major_formatter(LogFormatterSciNotation('%.2f'))
@@ -52,4 +52,4 @@ for key in data_file.keys():
     plt.subplots_adjust(hspace = 0.5)
 
     #plt.show()
-    plt.savefig("discrete_bias_hist_" + str(data_file[key]["HL"].value) + ".pdf", bbox_inches='tight', format = "pdf")
+    plt.savefig("extra_homog_" + str(data_file[key]["HL"].value) + ".pdf", bbox_inches='tight', format = "pdf")

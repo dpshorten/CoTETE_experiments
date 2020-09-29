@@ -6,7 +6,7 @@ import plot_format
 
 plot_format.set_format()
 
-data_file = h5py.File("figure_2.h5", "r")
+data_file = h5py.File("figure_2_long.h5", "r")
 
 for key in data_file.keys():
     TE_vals = data_file[key]["TE"]
@@ -32,7 +32,7 @@ for key in data_file.keys():
         axs[i].hlines(0.0, 0, num_events[-1])
 
         axs[i].set_xscale("log")
-        axs[i].set_ylim([-0.5, 0.5])
+        axs[i].set_ylim([-0.5, 1.1])
         axs[i].set_title("$N_U/N_X$ = " + str(mu[i]))
         #plt.setp(axs[i].spines.values(), linewidth=3)
 
@@ -44,6 +44,6 @@ for key in data_file.keys():
     plt.subplots_adjust(hspace = 0.5)
 
     #plt.show()
-    plt.savefig("bias_at_samples_"
+    plt.savefig("bias_at_samples_long_"
                 + str(data_file[key]["k"].value) +".pdf",
                 bbox_inches='tight', format = 'pdf')

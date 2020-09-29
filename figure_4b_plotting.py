@@ -40,4 +40,4 @@ axs[2].set_xlabel("Number of Target Events")
 plt.subplots_adjust(hspace = 0.25)
 
 #plt.show()
-plt.savefig("canonical_continuous.pdf", bbox_inches='tight', format = "pdf")
+plt.savefig("canonical_continuous_extra.pdf", bbox_inches='tight', format = "pdf")

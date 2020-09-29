@@ -4,8 +4,8 @@ using Distances: Cityblock, Chebyshev, Euclidean
 
 using CoTETE
 
-L_Y = 1
-L_X = 1
+L_Y = 3
+L_X = 3
 K = [1, 5]
 
 MU = [0.5, 1, 2, 5]
@@ -15,7 +15,7 @@ START_OFFSET = 5000
 TARGET_TRAIN_LENGTHS = [Int(1e2), Int(1e3), Int(1e4), Int(1e5)]
 REPETITIONS_PER_LENGTH = [1000, 100, 20, 20]
 
-h5open(string("figure_2", ".h5"), "w") do file
+h5open(string("figure_2_long", ".h5"), "w") do file
 
     target_events = 1e7 * rand(Int(1e7))
     sort!(target_events)

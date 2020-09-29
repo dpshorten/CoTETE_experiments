@@ -266,8 +266,8 @@ function find_lags_and_calc_TE(
             dy,
             y_lag,
             c_lag = chosen_c_lag,
-            conditioning_events = conditioning_events,
-            d_c = d_c,
+            conditioning_events = [conditioning_events],
+            d_c = [d_c],
         )
     end
     #max_TE = maximum(TE_at_c_lags)

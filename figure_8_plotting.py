@@ -1,98 +1,92 @@
-import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
-import os
 import h5py
-import sklearn.metrics
 import seaborn as sns
+import plot_format
 
-#plt.style.use('seaborn-dark-palette')
+plot_format.set_format()
 
-from matplotlib import rc
-rc('font',**{'family':'sans-serif','sans-serif':['Helvetica'],
-             'size' : 18})
 
-plt.rc('axes', titlesize=18)
-plt.rc('axes', labelsize=18)
-plt.rc('xtick', labelsize=12)
-plt.rc('ytick', labelsize=14)
-plt.rc('figure', titlesize=18)
 
-rc('text.latex', preamble=r'\usepackage{cmbright}')
+NUM_RUNS = 30
+SIZES = [6, 12, 18]
+TARGET_TRAIN_LENGTHS = [int(1e2), int(5e2), int(1e3), int(2e3), int(5e3), int(1e4)]
 
-#x = [int(1e3), int(2.5e3), int(5e3), int(1e4), int(2e4)]
-x = [int(2.5e3)]
-num_runs = 10
-num_surrogates = 20
-
-links = [
-   "abpd-lp",
-   "abpd-py",
-   "lp-abpd",
-   "lp-py",
-   "py-abpd",
-   "py-lp",
+OUTPUT_FILES = [
+"continuous_multi_correlated",
+"continuous_multi_uncorrelated",
+"continuous_pair_correlated",
+"continuous_pair_uncorrelated",
+"discrete_multi_correlated",
+"discrete_multi_uncorrelated",
+"discrete_pair_correlated",
+"discrete_pair_uncorrelated",
 ]
 
-LINKS = [
-   "ABPD-LP",
-   "ABPD-PY",
-   "LP-ABPD",
-   "LP-PY",
-   "PY-ABPD",
-   "PY-LP",
+INPUT_FILES = [
+"correlated_pop_unison",
+"uncorrelated_pop_unison",
+"correlated_pop_unison_pairwise",
+"uncorrelated_pop_unison_pairwise",
+"correlated_pop_discrete_unison",
+"uncorrelated_pop_discrete_unison",
+"correlated_pop_discrete_unison_pairwise",
+"uncorrelated_pop_discrete_unison_pairwise",
 ]
 
-data_file = h5py.File("figure_8c.h5", "r")
-
-plt.clf()
-
-TE = np.zeros((len(links), num_runs))
-surrogates = np.zeros((len(links), num_runs, num_surrogates))
-
-for key in data_file.keys():
-   source = str(data_file[key]["source"].value)[2:-1]
-   target = str(data_file[key]["target"].value)[2:-1]
-   num_targets = data_file[key]["num_target_events"].value
-   run = data_file[key]["run"].value
-
-   TE[links.index(source + "-" + target), run - 1] = data_file[key]["TE"].value
-   surrogates[links.index(source + "-" + target), run - 1, :] = data_file[key]["surrogates"].value
-
-print(TE.shape)
-print(surrogates.shape)
-
-print(TE[4, 0])
-print(surrogates[4, 0, :])
-
-p_vals = np.zeros((len(links), num_runs))
-for l in range(len(links)):
-   for r in range(num_runs):
-      if 1 in (surrogates[l, r, :] > TE[l, r]):
-         p_vals[l, r] = 1-(np.argmax(surrogates[l, r, :] > TE[l, r])/num_surrogates)
-      else:
-         p_vals[l, r] = 0
-
-print(p_vals)
-means_p_vals = np.mean(p_vals, axis = 1)
-stds_p_vals = np.std(p_vals, axis = 1)
-print()
-print(p_vals[4, :])
-
-sns.boxplot(data = np.transpose(p_vals[:, :]), palette = "Set3", linewidth = 2, width = 0.5, fliersize = 4)
-plt.xticks([0, 1, 2, 3, 4, 5], LINKS)
-
-plt.xlabel("connection", fontsize = 14)
-plt.ylabel("p value", fontsize = 14)
-plt.ylim([-0.1, 1.19])
-
-for i in [0, 1, 2, 5]:
-#for i in range(6):
-   plt.scatter(i, 1.1, s=1000, c='green', marker='$✓$')
-for i in [3, 4]:
-   plt.scatter(i, 1.1, s=1000, c='red', marker='$×$')
+def make_heatmap(title, filename, p_vals):
+    #plt.rc('xtick', labelsize=18)
+    fig, axs = plt.subplots(figsize = (10, 7))
+    sns.heatmap(p_vals, vmin = 0, vmax = 1)
+    plt.title(title)
+    plt.xticks(ticks = np.arange(len(TARGET_TRAIN_LENGTHS)) + 0.5, labels = TARGET_TRAIN_LENGTHS)
+    plt.yticks(ticks = np.flip(np.arange(3) + 0.5), labels = SIZES)
+    plt.xlabel("num target spikes")
+    plt.ylabel("num conditioning processes")
+    plt.savefig("figures/" + filename + ".pdf",
+                bbox_inches='tight', format = 'pdf')
+    plt.show()
 
 
-plt.tight_layout()
-plt.show()
-#plt.savefig("stg_sig_full")
+for k in range(len(OUTPUT_FILES)):
+    exc_p = np.zeros((NUM_RUNS, len(SIZES), len(TARGET_TRAIN_LENGTHS)))
+    inh_p = np.zeros((NUM_RUNS, len(SIZES), len(TARGET_TRAIN_LENGTHS)))
+    fake_p = np.zeros((NUM_RUNS, len(SIZES), len(TARGET_TRAIN_LENGTHS)))
+    fake_corr_p = np.zeros((NUM_RUNS, len(SIZES), len(TARGET_TRAIN_LENGTHS)))
+
+    for i in range(NUM_RUNS):
+
+        data_file = h5py.File(INPUT_FILES[k] + "/run_" + str(i + 1) + ".h5", "r")
+
+        for key in data_file.keys():
+            p = data_file[key]["p"].value
+            net_size_index = len(SIZES) - data_file[key]["net_size"].value - 1
+            extra_type = str(data_file[key]["extra_type"].value)[2:-1]
+            target_length = data_file[key]["target_length"].value
+            target_length_index = TARGET_TRAIN_LENGTHS.index(target_length)
+
+            if extra_type == "exc":
+                exc_p[i, net_size_index, target_length_index] = p
+            elif extra_type == "inh":
+                inh_p[i, net_size_index, target_length_index] = p
+            else:
+                fake_p[i, net_size_index, target_length_index] = p
+
+
+
+    #exc_p = np.mean(exc_p, axis = 0)
+    exc_p = exc_p < 0.05
+    inh_p = inh_p < 0.05
+    fake_p = fake_p < 0.05
+    fake_corr_p = fake_corr_p < 0.05
+    exc_p = np.sum(exc_p, axis = 0)/NUM_RUNS
+    inh_p = np.sum(inh_p, axis = 0)/NUM_RUNS
+    fake_p = np.sum(fake_p, axis = 0)/NUM_RUNS
+    fake_corr_p = np.sum(fake_corr_p, axis = 0)/NUM_RUNS
+
+
+
+
+    make_heatmap("Excitatory true positive rate", OUTPUT_FILES[k] + "/cont_exc", exc_p)
+    make_heatmap("Inhibitory true positive rate", OUTPUT_FILES[k] + "/cont_inh", inh_p)
+    make_heatmap("False positive rate", OUTPUT_FILES[k] + "/cont_fake", fake_p)
