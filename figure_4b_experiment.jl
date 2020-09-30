@@ -12,8 +12,8 @@ d_x_VALS = [1, 2, 3]
 
 
 START_OFFSET = 5000
-TARGET_TRAIN_LENGTHS = [Int(1e2), Int(1e3), Int(1e4), Int(1e5), Int(1e6)]
-REPETITIONS_PER_LENGTH = [1000, 100, 20, 20, 20]
+TARGET_TRAIN_LENGTHS = [Int(1e2), Int(1e3), Int(1e4), Int(1e5)]
+REPETITIONS_PER_LENGTH = [1000, 100, 20, 20]
 
 h5open("figure_4b.h5", "w") do file
 

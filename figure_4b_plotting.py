@@ -25,12 +25,14 @@ for i in range(TE_vals.shape[2]):
     means = np.array(means)
     stds = np.array(stds)
 
-    sns.lineplot(x = num_events, y = means, palette = "Set3", linewidth = 1, ax = axs[i])
+    sns.lineplot(x = num_events, y = means, palette = "Set3", linewidth = 4, ax = axs[i])
     axs[i].fill_between(num_events, means - stds, means + stds, alpha = 0.5)
-    axs[i].hlines(0.5076, 0, num_events[-1], color = "black", linewidth = 1)
+    axs[i].hlines(0.5076, 0, num_events[-1], color = "black", linewidth = 4)
+    axs[i].hlines(0.0, 0.0, num_events[-1], color = "black", linewidth = 2, linestyle='--')
 
     axs[i].set_xscale("log")
-    axs[i].set_ylim([0, 1.8])
+    axs[i].set_ylim([-0.1, 1.8])
+
     axs[i].set_title("$l_x$ = " + str(d_x[i]))
 
 axs[1].set_ylabel("TE (nats/second)")
@@ -40,4 +42,4 @@ axs[2].set_xlabel("Number of Target Events")
 plt.subplots_adjust(hspace = 0.25)
 
 #plt.show()
-plt.savefig("canonical_continuous_long.pdf", bbox_inches='tight', format = "pdf")
+plt.savefig("canonical_continuous.pdf", bbox_inches='tight', format = "pdf")
