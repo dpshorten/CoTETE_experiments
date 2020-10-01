@@ -6,13 +6,13 @@ import sys
 set_device('cpp_standalone', directory = "brain_output_" + sys.argv[1], debug=False)
 
 TEST_RUN = False
-OUTPUT_FOLDER = "output_stg_min_spk"
+OUTPUT_FOLDER = "output_pyloric2"
 if TEST_RUN:
-    RUN_LENGTH = 500 * second
+    RUN_LENGTH = 200 * second
 else:
-    RUN_LENGTH = 10000 * second
+    RUN_LENGTH = 1000 * second
 
-    
+
 defaultclock.dt = 0.01*ms
 Cm = (0.628*nfarad)
 F = 96485.33212
@@ -29,25 +29,25 @@ noise_theta_I = 1000
 
 time_multiplier = 1*second
 
-ABPD_properties = {                                                    
+ABPD_properties = {
     'tau_g_Na' : 0.25 * time_multiplier,
-    'tau_g_CaT' : 40 * time_multiplier,               
-    'tau_g_CaS' : 16.67 * time_multiplier,            
-    'tau_g_A' : 2 * time_multiplier,                 
-    'tau_g_KCa' : 10 * time_multiplier,               
-    'tau_g_Kd' : 1 * time_multiplier,                 
-    'tau_g_H' : 10000 * time_multiplier,              
+    'tau_g_CaT' : 40 * time_multiplier,
+    'tau_g_CaS' : 16.67 * time_multiplier,
+    'tau_g_A' : 2 * time_multiplier,
+    'tau_g_KCa' : 10 * time_multiplier,
+    'tau_g_Kd' : 1 * time_multiplier,
+    'tau_g_H' : 10000 * time_multiplier,
     'tau_g_s_chol' : 1e15 * time_multiplier,
-    'tau_g_s_glut_1' : 3000 * time_multiplier,
+    'tau_g_s_glut_1' : 5000 * time_multiplier,
     #'tau_g_s_glut_1' : 1e15 * time_multiplier,
-    'tau_g_s_glut_2' :  1e15 * time_multiplier,       
-    'Ca_tgt' : 90,                                   
-    'g_l' : 0.000 * usiemens,                         
-    'E_l' : -50*mV,                                   
-    'E_Na' : 50*mV,                                   
-    'E_A' : -80*mV,                                   
-    'E_H' : -20*mV,                                   
-    'E_Kd' : -80*mV,                                  
+    'tau_g_s_glut_2' :  1e15 * time_multiplier,
+    'Ca_tgt' : 90,
+    'g_l' : 0.000 * usiemens,
+    'E_l' : -50*mV,
+    'E_Na' : 50*mV,
+    'E_A' : -80*mV,
+    'E_H' : -20*mV,
+    'E_Kd' : -80*mV,
     'E_KCa' : -80*mV,
 }
 
@@ -61,7 +61,7 @@ LP_properties = {
     'tau_g_H' : 2000 * time_multiplier,
     'tau_g_s_chol' : 250 * time_multiplier,
     'tau_g_s_glut_1' : 5000 * time_multiplier,
-    'tau_g_s_glut_2' : 8000 * time_multiplier,
+    'tau_g_s_glut_2' : 2e3 * time_multiplier,
     #'tau_g_s_glut_2' : 1e15 * time_multiplier,
     'Ca_tgt' : 20,
     'g_l' : 0.02 * 0.628 * usiemens,
@@ -74,24 +74,24 @@ LP_properties = {
 }
 
 PY_properties = {
-    'tau_g_Na' : 1 * time_multiplier,            
-    'tau_g_CaT' : 40 * time_multiplier,          
-    'tau_g_CaS' : 40 * time_multiplier,          
-    'tau_g_A' :  2 * time_multiplier,            
-    'tau_g_KCa' : 1e15 * time_multiplier,        
-    'tau_g_Kd' : 0.8 * time_multiplier,          
+    'tau_g_Na' : 1 * time_multiplier,
+    'tau_g_CaT' : 40 * time_multiplier,
+    'tau_g_CaS' : 40 * time_multiplier,
+    'tau_g_A' :  2 * time_multiplier,
+    'tau_g_KCa' : 1e15 * time_multiplier,
+    'tau_g_Kd' : 0.8 * time_multiplier,
     'tau_g_H' : 2000 * time_multiplier,
-    'tau_g_s_chol' : 1e4 * time_multiplier,
-    'tau_g_s_glut_1' : 400 * time_multiplier,   
-    'tau_g_s_glut_2' : 1e5 * time_multiplier,
+    'tau_g_s_chol' : 1e3 * time_multiplier,
+    'tau_g_s_glut_1' : 400 * time_multiplier,
+    'tau_g_s_glut_2' : 5e4 * time_multiplier,
     #'tau_g_s_glut_2' : 1e15 * time_multiplier,
-    'Ca_tgt' : 20,                              
-    'g_l' : 0.01 * 0.628 * usiemens,             
-    'E_l' : -50*mV,                              
-    'E_Na' : 50*mV,                              
-    'E_A' : -80*mV,                              
-    'E_H' : -20*mV,                              
-    'E_Kd' : -80*mV,                             
+    'Ca_tgt' : 20,
+    'g_l' : 0.01 * 0.628 * usiemens,
+    'E_l' : -50*mV,
+    'E_Na' : 50*mV,
+    'E_A' : -80*mV,
+    'E_H' : -20*mV,
+    'E_Kd' : -80*mV,
     'E_KCa' : -80*mV,
 }
 
@@ -217,46 +217,45 @@ for neuron, neuron_properties in zip([ABPD, LP, PY], [ABPD_properties, LP_proper
     neuron.mRNA_s_glut_1 = neuron.g_s_glut_1 / usiemens
     neuron.mRNA_s_glut_2 = neuron.g_s_glut_2 / usiemens
 
+tau_s_bar = 10*ms
 eqs_glut_synapse_1 = Equations('''
 ds/dt = (s_bar - s)/tau_s : 1
-s_bar = 1/(1 + exp((-35*mV - v_pre)/(5*mV))) : 1
+ds_bar/dt = (0 - s_bar)/tau_s_bar : 1
 tau_s = (1 - s_bar)/(1/(40*ms)) : second
 I_glut_1_post = g_s_glut_1_post * (s) * (v_post - (-70*mV)) : amp (summed)
 ''')
 
 eqs_glut_synapse_2 = Equations('''
 ds/dt = (s_bar - s)/tau_s : 1
-s_bar = 1/(1 + exp((-35*mV - v_pre)/(5*mV))) : 1
+ds_bar/dt = (0 - s_bar)/tau_s_bar : 1
+tau_s_bar = 10 * ms : second
 tau_s = (1 - s_bar)/(1/(40*ms)) : second
 I_glut_2_post = g_s_glut_2_post * (s) * (v_post - (-70*mV)) : amp (summed)
 ''')
 
 eqs_chol_synapse = Equations('''
 ds/dt = (s_bar - s)/tau_s : 1
-s_bar = 1/(1 + exp((-35*mV - v_pre)/(5*mV))) : 1
+ds_bar/dt = (0 - s_bar)/tau_s_bar : 1
+tau_s_bar = 10 * ms : second
 tau_s = (1 - s_bar)/(1/(100*ms)) : second
 I_chol_post = g_s_chol_post * (s) * (v_post - (-80*mV)) : amp (summed)
 ''')
-w = 15*mV
-#ABPD_LP_glut = Synapses(ABPD, LP, model = eqs_glut_synapse_1)
-ABPD_LP_glut = Synapses(ABPD, LP, on_pre='v -= 20*mV', delay = 20*ms)
+
+s_bar_post = 0.99
+ABPD_LP_glut = Synapses(ABPD, LP, model = eqs_glut_synapse_1, on_pre = 's_bar = s_bar_post')
 ABPD_LP_glut.connect()
-#ABPD_PY_glut = Synapses(ABPD, PY, model = eqs_glut_synapse_1)
-ABPD_PY_glut = Synapses(ABPD, PY, on_pre='v -= 20*mV', delay = 0*ms)
+ABPD_PY_glut = Synapses(ABPD, PY, model = eqs_glut_synapse_1, on_pre = 's_bar = s_bar_post')
 ABPD_PY_glut.connect()
-#ABPD_LP_chol = Synapses(ABPD, LP, model = eqs_chol_synapse)
-#ABPD_LP_chol.connect()
-#ABPD_PY_chol = Synapses(ABPD, PY, model = eqs_chol_synapse)
-#ABPD_PY_chol.connect()
-#LP_ABPD_glut = Synapses(LP, ABPD, model = eqs_glut_synapse_1)
-#LP_ABPD_glut = Synapses(LP, ABPD, on_pre='v -= 5*mV')
-#LP_ABPD_glut.connect()
-#LP_PY_glut = Synapses(LP, PY, model = eqs_glut_synapse_2)
-#LP_PY_glut = Synapses(LP, PY, on_pre='v -= 2*mV')
-#LP_PY_glut.connect()
-#PY_LP_glut = Synapses(PY, LP, model = eqs_glut_synapse_2)
-#PY_LP_glut = Synapses(PY, LP, on_pre='v -= 5*mV')
-#PY_LP_glut.connect()
+ABPD_LP_chol = Synapses(ABPD, LP, model = eqs_chol_synapse, on_pre = 's_bar = s_bar_post')
+ABPD_LP_chol.connect()
+ABPD_PY_chol = Synapses(ABPD, PY, model = eqs_chol_synapse, on_pre = 's_bar = s_bar_post')
+ABPD_PY_chol.connect()
+LP_ABPD_glut = Synapses(LP, ABPD, model = eqs_glut_synapse_1, on_pre = 's_bar = s_bar_post')
+LP_ABPD_glut.connect()
+LP_PY_glut = Synapses(LP, PY, model = eqs_glut_synapse_2, on_pre = 's_bar = s_bar_post')
+LP_PY_glut.connect()
+PY_LP_glut = Synapses(PY, LP, model = eqs_glut_synapse_2, on_pre = 's_bar = s_bar_post')
+PY_LP_glut.connect()
 
 
 
@@ -264,12 +263,15 @@ if TEST_RUN:
     trace_ABPD = StateMonitor(ABPD, 'v', record=True, dt = 0.5 * ms, )
     trace_LP = StateMonitor(LP, 'v', record=True, dt = 0.5 * ms)
     trace_PY = StateMonitor(PY, 'v', record=True, dt = 0.5 * ms)
-else:
-    spikes_ABPD = SpikeMonitor(ABPD)
-    spikes_LP = SpikeMonitor(LP)
-    spikes_PY = SpikeMonitor(PY)
+spikes_ABPD = SpikeMonitor(ABPD)
+spikes_LP = SpikeMonitor(LP)
+spikes_PY = SpikeMonitor(PY)
 
 run(RUN_LENGTH, report='text')
+
+print(len(spikes_ABPD.spike_trains()[0]))
+print(len(spikes_LP.spike_trains()[0]))
+print(len(spikes_PY.spike_trains()[0]))
 
 if TEST_RUN:
     plot(trace_ABPD.t/ms, trace_ABPD[0].v/mV + 300, linewidth = 2, color = (0, 0.39216, 0.78431))
@@ -279,10 +281,6 @@ if TEST_RUN:
     ylabel('v (mV)')
     show()
 else:
-    print(len(spikes_ABPD.spike_trains()[0]))
-    print(len(spikes_LP.spike_trains()[0]))
-    print(len(spikes_PY.spike_trains()[0]))
-
     out_spikes = open(OUTPUT_FOLDER + "/abpd_" + sys.argv[1] + ".dat", "w")
     for spike in spikes_ABPD.spike_trains()[0]:
         out_spikes.write(str(float(spike)) + "\n")
