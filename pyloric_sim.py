@@ -24,7 +24,7 @@ Ca_EQ = 0.05
 TAU_Ca = 200 * ms
 EXTRACELLULAR_Ca = 3000
 
-noise_sigma_I = 1.25e-8
+noise_sigma_I = 1e-8
 noise_theta_I = 1000
 
 time_multiplier = 1*second
@@ -59,9 +59,9 @@ LP_properties = {
     'tau_g_KCa' : 20 * time_multiplier,
     'tau_g_Kd' : 4 * time_multiplier,
     'tau_g_H' : 2000 * time_multiplier,
-    'tau_g_s_chol' : 250 * time_multiplier,
-    'tau_g_s_glut_1' : 5000 * time_multiplier,
-    'tau_g_s_glut_2' : 1e3 * time_multiplier,
+    'tau_g_s_chol' : 500 * time_multiplier,
+    'tau_g_s_glut_1' : 1e4 * time_multiplier,
+    'tau_g_s_glut_2' : 1e4 * time_multiplier,
     #'tau_g_s_glut_2' : 1e15 * time_multiplier,
     'Ca_tgt' : 20,
     'g_l' : 0.02 * 0.628 * usiemens,
@@ -81,9 +81,9 @@ PY_properties = {
     'tau_g_KCa' : 1e15 * time_multiplier,
     'tau_g_Kd' : 0.8 * time_multiplier,
     'tau_g_H' : 2000 * time_multiplier,
-    'tau_g_s_chol' : 1e4 * time_multiplier,
+    'tau_g_s_chol' : 5e3 * time_multiplier,
     'tau_g_s_glut_1' : 250 * time_multiplier,
-    'tau_g_s_glut_2' : 5e4 * time_multiplier,
+    'tau_g_s_glut_2' : 1e5 * time_multiplier,
     #'tau_g_s_glut_2' : 1e15 * time_multiplier,
     'Ca_tgt' : 20,
     'g_l' : 0.01 * 0.628 * usiemens,
@@ -228,7 +228,6 @@ I_glut_1_post = g_s_glut_1_post * (s) * (v_post - (-70*mV)) : amp (summed)
 eqs_glut_synapse_2 = Equations('''
 ds/dt = (s_bar - s)/tau_s : 1
 ds_bar/dt = (0 - s_bar)/tau_s_bar : 1
-tau_s_bar = 10 * ms : second
 tau_s = (1 - s_bar)/(1/(40*ms)) : second
 I_glut_2_post = g_s_glut_2_post * (s) * (v_post - (-70*mV)) : amp (summed)
 ''')
@@ -236,7 +235,6 @@ I_glut_2_post = g_s_glut_2_post * (s) * (v_post - (-70*mV)) : amp (summed)
 eqs_chol_synapse = Equations('''
 ds/dt = (s_bar - s)/tau_s : 1
 ds_bar/dt = (0 - s_bar)/tau_s_bar : 1
-tau_s_bar = 10 * ms : second
 tau_s = (1 - s_bar)/(1/(100*ms)) : second
 I_chol_post = g_s_chol_post * (s) * (v_post - (-80*mV)) : amp (summed)
 ''')
