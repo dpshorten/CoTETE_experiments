@@ -7,6 +7,8 @@ import plot_format
 plot_format.set_format()
 
 plt.rc('xtick', labelsize=15)
+plt.rc('ytick', labelsize=18)
+
 
 FIGURE_TYPES = ["a", "b"]
 FIGURE_TYPE_INDEX = 1
@@ -52,8 +54,7 @@ p_vals = np.reshape(p_vals, (len(noise_vals) * len(num_events_vals) *2, 10))
 print(p_vals)
 #
 plt.ylabel("p value")
-plt.ylim([-0.1, 1.0])
-#plt.yscale("log")
+
 
 sns.boxplot(data = np.transpose(p_vals[:, :]), palette = "colorblind",
              linewidth = 4, width = 0.5, fliersize = 10)
@@ -68,9 +69,12 @@ if FIGURE_TYPE_INDEX == 1:
 else:
     plt.scatter(0, 0.93, s=1000, c='red', marker='$×$')
     plt.scatter(2, 0.93, s=1000, c='red', marker='$×$')
-    
+
 plt.scatter(1, 0.93, s=1000, c='green', marker='$✓$')
 plt.scatter(3, 0.93, s=1000, c='green', marker='$✓$')
+
+plt.ylim([-0.1, 1.0])
+#plt.yscale("symlog")
 
 NAMES = ["$\\sigma_D \\! = \\! 7.5$e-2\n $D_1 \\rightarrow D_2 | M$",
          "$\\sigma_D \\! = \\! 7.5$e-2\n  $M \\rightarrow D_2 | D_1$",
@@ -82,7 +86,6 @@ if FIGURE_TYPE_INDEX == 1:
     save_file_name = "noisy_copy_inference_continuous.pdf"
 else:
     save_file_name = "noisy_copy_inference_discrete.pdf"
-    
+
 plt.savefig(save_file_name,
             bbox_inches='tight', format = 'pdf')
-

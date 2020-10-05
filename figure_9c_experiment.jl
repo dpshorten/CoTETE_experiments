@@ -12,24 +12,25 @@ l_x = 1
 l_z = [1]
 l_y = 1
 
-K = 10
+K = 5
 
-START_OFFSET = 200
+START_OFFSET = 100
 TARGET_TRAIN_LENGTH = Int(3e3)
 #TARGET_TRAIN_LENGTH = Int(1e4)
 METRIC = Cityblock()
 NUM_SAMPLES_RATIO = 1.0
-SURROGATE_UPSAMPLE_RATIO = 1.0
-K_PERM = 10
+SURROGATE_UPSAMPLE_RATIO = 3.1
+K_PERM = 5
 
 NUM_SURROGATES = 100
 #NUM_SURROGATES = 20
 
-folder = "output_pyloric/"
+folder = "output_pyloric_noisy2/"
 
 h5open("figure_8c.h5", "w") do file
     for j = 1:10
     for permutation in permutations(["abpd", "py", "lp"])
+    #for permutation in [["abpd", "lp", "py"]]
         target_events = read(string(folder, permutation[1], "_", j, ".dat"))
         conditioning_events = read(string(folder, permutation[2], "_", j, ".dat"))
         source_events = read(string(folder, permutation[3], "_", j, ".dat"))
@@ -38,17 +39,17 @@ h5open("figure_8c.h5", "w") do file
 
         convert(Matrix, target_events)
         target_events = target_events[:, 1]
-        target_events = target_events + 1e-6 .* randn(size(target_events)[1])
+	target_events = target_events + 1e-4 .* (rand(size(target_events)[1]) .- 0.5)
         sort!(target_events)
         #target_events = target_events[1000:min(3 * TARGET_TRAIN_LENGTH, length(target_events))]
         convert(Matrix, source_events)
         source_events = source_events[:, 1]
-        source_events = source_events + 1e-6 .* randn(size(source_events)[1])
+        source_events = source_events + 1e-4 .* (rand(size(source_events)[1]) .- 0.5)
         sort!(source_events)
         #source_events = source_events[1000:min(3 * TARGET_TRAIN_LENGTH, length(source_events))]
         convert(Matrix, conditioning_events)
         conditioning_events = conditioning_events[:, 1]
-        conditioning_events = conditioning_events + 1e-6 .* randn(size(conditioning_events)[1])
+	conditioning_events = conditioning_events + 1e-4 .* (rand(size(conditioning_events)[1]) .- 0.5)
         sort!(conditioning_events)
         #conditioning_events = conditioning_events[1000:min(3 * TARGET_TRAIN_LENGTH, length(conditioning_events))]
 
@@ -62,6 +63,8 @@ h5open("figure_8c.h5", "w") do file
             num_samples_ratio = NUM_SAMPLES_RATIO,
             k_global = K,
             num_surrogates = NUM_SURROGATES,
+	    surrogate_num_samples_ratio = SURROGATE_UPSAMPLE_RATIO,
+            k_perm = K_PERM,
         )
 
         TE, p, surrogates = CoTETE.estimate_TE_and_p_value_from_event_times(

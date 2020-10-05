@@ -5,6 +5,7 @@ include("discretisation_testing.jl")
 TARGET_TRAIN_LENGTHS = [100, 1000, Int(1e4), Int(1e5)]
 REPETITIONS_PER_LENGTH = [1000, 100, 20, 20, 20]
 DT_VALS = [1.0, 0.5, 0.2, 0.1, 0.05, 0.02, 0.01]
+LAGS =    [0,     0,   0,   0,    4, 19, 44]
 OFFSET = 200
 
 target_events = read(string("train_x_1.dat"))
@@ -40,13 +41,15 @@ h5open("extra_fine_discrete.h5", "w") do file
                 end
                 source_end_event -= 1
 
+                num_bins = min(12, Int(round(1 / DT_VALS[l])))
+
                 TE = estimate_TE_discrete(
                     target_events[target_start_event:target_end_event],
                     source_events[source_start_event:source_end_event],
                     DT_VALS[l],
-                    min(12, Int(round(1 / DT_VALS[l]))),
-                    min(12, Int(round(1 / DT_VALS[l]))),
-                    0,
+                    num_bins,
+                    num_bins,
+                    LAGS[l],
                 )
 
                 TE_vals[l, i, j] = TE

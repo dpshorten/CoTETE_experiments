@@ -8,8 +8,8 @@ import plot_format
 
 plot_format.set_format()
 
-data_file = h5py.File("figure_4c.h5", "r")
-#data_file = h5py.File("extra_fine_discrete.h5", "r")
+#ata_file = h5py.File("figure_4c.h5", "r")
+data_file = h5py.File("extra_fine_discrete.h5", "r")
 
 
 key = "foo"
@@ -48,12 +48,12 @@ axs[1].set_ylabel("TE (nats/second)")
 axs[0].set_xlabel("")
 axs[1].set_xlabel("")
 axs[2].set_xlabel("")
-axs[3].set_xlabel("Number of Target Events")
-# axs[3].set_xlabel("")
-# axs[4].set_xlabel("")
-# axs[5].set_xlabel("")
-# axs[6].set_xlabel("Number of Target Events")
+#axs[3].set_xlabel("Number of Target Events")
+axs[3].set_xlabel("")
+axs[4].set_xlabel("")
+axs[5].set_xlabel("")
+axs[6].set_xlabel("Number of Target Events")
 plt.subplots_adjust(hspace = 0.4)
 
 #plt.show()
-plt.savefig("discrete_canonical.pdf", bbox_inches='tight', format = "pdf")
+plt.savefig("extra_fine_discrete.pdf", bbox_inches='tight', format = "pdf")

@@ -6,7 +6,10 @@ import plot_format
 
 plot_format.set_format()
 
-data_file = h5py.File("figure_2_long.h5", "r")
+FIGURE_TYPES = ["main", "high_d_y", "extra_reps"]
+FIGURE_TYPE_INDEX = 2
+
+data_file = h5py.File("figure_2_" + FIGURE_TYPES[FIGURE_TYPE_INDEX] + ".h5", "r")
 
 for key in data_file.keys():
     TE_vals = data_file[key]["TE"]
@@ -44,6 +47,6 @@ for key in data_file.keys():
     plt.subplots_adjust(hspace = 0.5)
 
     #plt.show()
-    plt.savefig("bias_at_samples_long_"
+    plt.savefig("bias_at_samples_" + FIGURE_TYPES[FIGURE_TYPE_INDEX] + "_"
                 + str(data_file[key]["k"].value) +".pdf",
                 bbox_inches='tight', format = 'pdf')
