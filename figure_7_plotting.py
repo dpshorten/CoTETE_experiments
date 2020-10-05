@@ -6,11 +6,15 @@ import plot_format
 
 plot_format.set_format()
 
-plt.rc('xtick', labelsize=16)
+plt.rc('xtick', labelsize=15)
 
+FIGURE_TYPES = ["a", "b"]
+FIGURE_TYPE_INDEX = 1
 
-data_file = h5py.File("figure_7a.h5", "r")
-#data_file = h5py.File("figure_7b.h5", "r")
+if FIGURE_TYPE_INDEX == 1:
+    data_file = h5py.File("figure_7a.h5", "r")
+else:
+    data_file = h5py.File("figure_7b.h5", "r")
 
 P_CUTOFF = 0.95
 
@@ -57,18 +61,28 @@ sns.stripplot(data = np.transpose(p_vals[:, :]), palette = "colorblind",
              linewidth = 3, size = 10)
 plt.hlines(0.05, -0.5, 3.5, color = "black", linewidth = 2, linestyle='--')
 plt.xlim([-0.5, 3.5])
-#plt.scatter(0, 0.93, s=1000, c='red', marker='$×$')
-plt.scatter(0, 0.93, s=1000, c='green', marker='$✓$')
+
+if FIGURE_TYPE_INDEX == 1:
+    plt.scatter(0, 0.93, s=1000, c='green', marker='$✓$')
+    plt.scatter(2, 0.93, s=1000, c='green', marker='$✓$')
+else:
+    plt.scatter(0, 0.93, s=1000, c='red', marker='$×$')
+    plt.scatter(2, 0.93, s=1000, c='red', marker='$×$')
+    
 plt.scatter(1, 0.93, s=1000, c='green', marker='$✓$')
-#plt.scatter(2, 0.93, s=1000, c='red', marker='$×$')
-plt.scatter(2, 0.93, s=1000, c='green', marker='$✓$')
 plt.scatter(3, 0.93, s=1000, c='green', marker='$✓$')
-NAMES = ["$\\sigma_D \\! = \\! 7.5$e-2\nzero",
-         "$\\sigma_D \\! = \\! 7.5$e-2\nnon-zero",
-         "$\\sigma_D \\! = \\! 5$e-2\nzero",
-         "$\\sigma_D \\! = \\! 5$e-2\nnon-zero"]
+
+NAMES = ["$\\sigma_D \\! = \\! 7.5$e-2\n $D_1 \\rightarrow D_2 | M$",
+         "$\\sigma_D \\! = \\! 7.5$e-2\n  $M \\rightarrow D_2 | D_1$",
+         "$\\sigma_D \\! = \\! 5$e-2\n  $D_1 \\rightarrow D_2 | M$",
+         "$\\sigma_D \\! = \\! 5$e-2\n  $M \\rightarrow D_2 | D_1$",]
 plt.xticks([0, 1, 2, 3], NAMES)
 
-plt.savefig("noisy_copy_inference_continuous"
-                + ".pdf",
-                bbox_inches='tight', format = 'pdf')
+if FIGURE_TYPE_INDEX == 1:
+    save_file_name = "noisy_copy_inference_continuous.pdf"
+else:
+    save_file_name = "noisy_copy_inference_discrete.pdf"
+    
+plt.savefig(save_file_name,
+            bbox_inches='tight', format = 'pdf')
+

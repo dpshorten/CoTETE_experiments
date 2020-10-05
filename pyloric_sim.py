@@ -5,15 +5,15 @@ import sys
 
 set_device('cpp_standalone', directory = "brain_output_" + sys.argv[1], debug=False)
 
-TEST_RUN = False
-OUTPUT_FOLDER = "output_pyloric2"
+TEST_RUN = True
+OUTPUT_FOLDER = "output_pyloric_noisy2"
 if TEST_RUN:
-    RUN_LENGTH = 200 * second
+    RUN_LENGTH = 50 * second
 else:
-    RUN_LENGTH = 1000 * second
+    RUN_LENGTH = 10000 * second
 
 
-defaultclock.dt = 0.01*ms
+defaultclock.dt = 0.005*ms
 Cm = (0.628*nfarad)
 F = 96485.33212
 R = 8.314462618
@@ -24,7 +24,7 @@ Ca_EQ = 0.05
 TAU_Ca = 200 * ms
 EXTRACELLULAR_Ca = 3000
 
-noise_sigma_I = 5e-9
+noise_sigma_I = 1.25e-8
 noise_theta_I = 1000
 
 time_multiplier = 1*second
@@ -38,7 +38,7 @@ ABPD_properties = {
     'tau_g_Kd' : 1 * time_multiplier,
     'tau_g_H' : 10000 * time_multiplier,
     'tau_g_s_chol' : 1e15 * time_multiplier,
-    'tau_g_s_glut_1' : 5000 * time_multiplier,
+    'tau_g_s_glut_1' : 1e4 * time_multiplier,
     #'tau_g_s_glut_1' : 1e15 * time_multiplier,
     'tau_g_s_glut_2' :  1e15 * time_multiplier,
     'Ca_tgt' : 90,
@@ -61,7 +61,7 @@ LP_properties = {
     'tau_g_H' : 2000 * time_multiplier,
     'tau_g_s_chol' : 250 * time_multiplier,
     'tau_g_s_glut_1' : 5000 * time_multiplier,
-    'tau_g_s_glut_2' : 2e3 * time_multiplier,
+    'tau_g_s_glut_2' : 1e3 * time_multiplier,
     #'tau_g_s_glut_2' : 1e15 * time_multiplier,
     'Ca_tgt' : 20,
     'g_l' : 0.02 * 0.628 * usiemens,
@@ -81,8 +81,8 @@ PY_properties = {
     'tau_g_KCa' : 1e15 * time_multiplier,
     'tau_g_Kd' : 0.8 * time_multiplier,
     'tau_g_H' : 2000 * time_multiplier,
-    'tau_g_s_chol' : 1e3 * time_multiplier,
-    'tau_g_s_glut_1' : 400 * time_multiplier,
+    'tau_g_s_chol' : 1e4 * time_multiplier,
+    'tau_g_s_glut_1' : 250 * time_multiplier,
     'tau_g_s_glut_2' : 5e4 * time_multiplier,
     #'tau_g_s_glut_2' : 1e15 * time_multiplier,
     'Ca_tgt' : 20,
@@ -217,7 +217,7 @@ for neuron, neuron_properties in zip([ABPD, LP, PY], [ABPD_properties, LP_proper
     neuron.mRNA_s_glut_1 = neuron.g_s_glut_1 / usiemens
     neuron.mRNA_s_glut_2 = neuron.g_s_glut_2 / usiemens
 
-tau_s_bar = 10*ms
+tau_s_bar = 50*ms
 eqs_glut_synapse_1 = Equations('''
 ds/dt = (s_bar - s)/tau_s : 1
 ds_bar/dt = (0 - s_bar)/tau_s_bar : 1

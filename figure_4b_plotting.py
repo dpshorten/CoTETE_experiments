@@ -6,7 +6,10 @@ import plot_format
 
 plot_format.set_format()
 
-data_file = h5py.File("figure_4b.h5", "r")
+FIGURE_TYPES = ["main", "high_d_y", "extra_reps"]
+FIGURE_TYPE_INDEX = 1
+
+data_file = h5py.File("figure_4b_" + FIGURE_TYPES[FIGURE_TYPE_INDEX] + ".h5", "r")
 
 key = "bar"
 TE_vals = data_file[key]["TE"]
@@ -42,4 +45,4 @@ axs[2].set_xlabel("Number of Target Events")
 plt.subplots_adjust(hspace = 0.25)
 
 #plt.show()
-plt.savefig("canonical_continuous.pdf", bbox_inches='tight', format = "pdf")
+plt.savefig("canonical_continuous_" + FIGURE_TYPES[FIGURE_TYPE_INDEX]  + ".pdf", bbox_inches='tight', format = "pdf")

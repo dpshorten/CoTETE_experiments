@@ -2,20 +2,27 @@ using CSV: read
 using HDF5: h5open, g_create
 using Distances: Cityblock, Chebyshev, Euclidean
 
-
 using CoTETE
 
-d_y = 1
-K = 4
+FIGURE_TYPES = ["main", "high_d_y", "extra_reps"]
+FIGURE_TYPE_INDEX = 1
 
-d_x_VALS = [1, 2, 3]
+D_Y = 1
+if FIGURE_TYPE_INDEX == 2
+    D_Y = 3
+end
+K = 4
+D_X_VALS = [1, 2, 3]
 
 
 START_OFFSET = 5000
-TARGET_TRAIN_LENGTHS = [Int(1e2), Int(1e3), Int(1e4), Int(1e5)]
-REPETITIONS_PER_LENGTH = [1000, 100, 20, 20]
+TARGET_TRAIN_LENGTHS = [Int(1e2), Int(1e3), Int(1e4), Int(1e5), Int(1e6)]
+REPETITIONS_PER_LENGTH = [1000, 100, 20, 20, 20]
+if FIGURE_TYPE_INDEX == 3
+    REPETITIONS_PER_LENGTH = [1000, 100, 100, 100, 100]
+end
 
-h5open("figure_4b.h5", "w") do file
+h5open(string("figure_4b_", FIGURE_TYPES[FIGURE_TYPE_INDEX],".h5"), "w") do file
 
     target_events = read("train_x_1.dat")
     source_events = read("train_y_1.dat")
@@ -27,14 +34,14 @@ h5open("figure_4b.h5", "w") do file
 
     TE_vals =
         -100 *
-        ones((length(d_x_VALS), length(TARGET_TRAIN_LENGTHS), maximum(REPETITIONS_PER_LENGTH)))
-    for d_x in d_x_VALS
+        ones((length(D_X_VALS), length(TARGET_TRAIN_LENGTHS), maximum(REPETITIONS_PER_LENGTH)))
+    for d_x in D_X_VALS
         for i = 1:length(TARGET_TRAIN_LENGTHS)
             println(d_x, " ", i)
             Threads.@threads for j = 1:REPETITIONS_PER_LENGTH[i]
                 parameters = CoTETE.CoTETEParameters(
                     l_x = d_x,
-                    l_y = d_y,
+                    l_y = D_Y,
                     auto_find_start_and_num_events = false,
                     start_event = START_OFFSET + (j * TARGET_TRAIN_LENGTHS[i]),
                     num_target_events = TARGET_TRAIN_LENGTHS[i],
@@ -49,7 +56,7 @@ h5open("figure_4b.h5", "w") do file
 
     g = g_create(file, string("bar"))
     g["TE"] = TE_vals
-    g["d_x"] = d_x_VALS
+    g["d_x"] = D_X_VALS
     g["num_target_events"] = TARGET_TRAIN_LENGTHS
 
 end
