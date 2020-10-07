@@ -1,29 +1,19 @@
-import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 import os
 import h5py
-import sklearn.metrics
 import seaborn as sns
+import plot_format
 
-#plt.style.use('seaborn-dark-palette')
+plot_format.set_format()
 
-from matplotlib import rc
-rc('font',**{'family':'sans-serif','sans-serif':['Helvetica'],
-             'size' : 18})
+plt.rc('xtick', labelsize=16)
+plt.rc('ytick', labelsize=18)
 
-plt.rc('axes', titlesize=18)
-plt.rc('axes', labelsize=18)
-plt.rc('xtick', labelsize=12)
-plt.rc('ytick', labelsize=14)
-plt.rc('figure', titlesize=18)
 
-rc('text.latex', preamble=r'\usepackage{cmbright}')
-
-#x = [int(1e3), int(2.5e3), int(5e3), int(1e4), int(2e4)]
 x = [int(2.5e3)]
-num_runs = 10
-num_surrogates = 20
+num_runs = 9
+num_surrogates = 100
 
 links = [
    "abpd-lp",
@@ -35,20 +25,20 @@ links = [
 ]
 
 LINKS = [
-   "ABPD-LP",
-   "ABPD-PY",
-   "LP-ABPD",
-   "LP-PY",
-   "PY-ABPD",
-   "PY-LP",
+   "ABPD\nto\nLP",
+   "ABPD\nto\nPY",
+   "LP\nto\nABPD",
+   "LP\nto\nPY",
+   "PY\nto\nABPD",
+   "PY\nto\nLP",
 ]
 
-data_file = h5py.File("figure_8c.h5", "r")
+data_file = h5py.File("figure_9d.h5", "r")
 
 plt.clf()
 
-TE = np.zeros((len(links), num_runs))
-surrogates = np.zeros((len(links), num_runs, num_surrogates))
+TE = np.zeros((len(links), num_runs + 1))
+surrogates = np.zeros((len(links), num_runs + 1, num_surrogates))
 
 for key in data_file.keys():
    source = str(data_file[key]["source"].value)[2:-1]
@@ -74,25 +64,32 @@ for l in range(len(links)):
          p_vals[l, r] = 0
 
 print(p_vals)
-means_p_vals = np.mean(p_vals, axis = 1)
-stds_p_vals = np.std(p_vals, axis = 1)
-print()
-print(p_vals[4, :])
+p_vals = np.delete(p_vals, obj = 1, axis = 1)
+print(p_vals)
 
-sns.boxplot(data = np.transpose(p_vals[:, :]), palette = "Set3", linewidth = 2, width = 0.5, fliersize = 4)
+fig, axs = plt.subplots(figsize = (6, 6))
+#sns.boxplot(data = np.transpose(p_vals[:, :]), palette = "Set3", linewidth = 2, width = 0.5, fliersize = 4)
+sns.boxplot(data = np.transpose(p_vals[:, :]), palette = "colorblind",
+             linewidth = 4, width = 0.5, fliersize = 0)
+sns.stripplot(data = np.transpose(p_vals[:, :]), palette = "colorblind",
+             linewidth = 3, size = 10)
+plt.hlines(0.05, -0.5, 5.5, color = "black", linewidth = 2, linestyle='--')
 plt.xticks([0, 1, 2, 3, 4, 5], LINKS)
 
-plt.xlabel("connection", fontsize = 14)
-plt.ylabel("p value", fontsize = 14)
+#plt.xlabel("connection")
+plt.ylabel("p value")
 plt.ylim([-0.1, 1.19])
 
-for i in [0, 1, 2, 5]:
+for i in [0, 1, 2, 3, 5]:
 #for i in range(6):
    plt.scatter(i, 1.1, s=1000, c='green', marker='$✓$')
-for i in [3, 4]:
+for i in [4]:
    plt.scatter(i, 1.1, s=1000, c='red', marker='$×$')
 
 
 plt.tight_layout()
-plt.show()
+#plt.show()
+
+plt.savefig("stg_sig_full_discrete.pdf",
+            bbox_inches='tight', format = 'pdf')
 #plt.savefig("stg_sig_full")
