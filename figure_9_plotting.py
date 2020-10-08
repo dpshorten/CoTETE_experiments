@@ -33,7 +33,7 @@ LINKS = [
    "PY\nto\nLP",
 ]
 
-data_file = h5py.File("figure_9d.h5", "r")
+data_file = h5py.File("new_nines/figure_9c_3e4.h5", "r")
 
 plt.clf()
 
@@ -80,16 +80,16 @@ plt.xticks([0, 1, 2, 3, 4, 5], LINKS)
 plt.ylabel("p value")
 plt.ylim([-0.1, 1.19])
 
-for i in [0, 1, 2, 3, 5]:
-#for i in range(6):
+#for i in [0, 1, 2, 3, 5]:
+for i in range(6):
    plt.scatter(i, 1.1, s=1000, c='green', marker='$✓$')
-for i in [4]:
-   plt.scatter(i, 1.1, s=1000, c='red', marker='$×$')
+#for i in [4]:
+#   plt.scatter(i, 1.1, s=1000, c='red', marker='$×$')
 
 
 plt.tight_layout()
 #plt.show()
 
-plt.savefig("stg_sig_full_discrete.pdf",
+plt.savefig("stg_sig_full_3point5.pdf",
             bbox_inches='tight', format = 'pdf')
 #plt.savefig("stg_sig_full")

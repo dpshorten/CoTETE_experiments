@@ -6,11 +6,11 @@ import sys
 set_device('cpp_standalone', directory = "brain_output_" + sys.argv[1], debug=False)
 
 TEST_RUN = True
-OUTPUT_FOLDER = "output_pyloric_noisy"
+OUTPUT_FOLDER = "output_pyloric_noisy4"
 if TEST_RUN:
-    RUN_LENGTH = 200 * second
+    RUN_LENGTH = 100 * second
 else:
-    RUN_LENGTH = 1000 * second
+    RUN_LENGTH = 10000 * second
 
 
 defaultclock.dt = 0.005*ms
@@ -24,7 +24,7 @@ Ca_EQ = 0.05
 TAU_Ca = 200 * ms
 EXTRACELLULAR_Ca = 3000
 
-noise_sigma_I = 1e-8
+noise_sigma_I = 9e-9
 noise_theta_I = 1000
 
 time_multiplier = 1*second
@@ -38,7 +38,7 @@ ABPD_properties = {
     'tau_g_Kd' : 1 * time_multiplier,
     'tau_g_H' : 10000 * time_multiplier,
     'tau_g_s_chol' : 1e15 * time_multiplier,
-    'tau_g_s_glut_1' : 1e4 * time_multiplier,
+    'tau_g_s_glut_1' : 2e4 * time_multiplier,
     #'tau_g_s_glut_1' : 1e15 * time_multiplier,
     'tau_g_s_glut_2' :  1e15 * time_multiplier,
     'Ca_tgt' : 90,
@@ -59,9 +59,9 @@ LP_properties = {
     'tau_g_KCa' : 20 * time_multiplier,
     'tau_g_Kd' : 4 * time_multiplier,
     'tau_g_H' : 2000 * time_multiplier,
-    'tau_g_s_chol' : 250 * time_multiplier,
+    'tau_g_s_chol' : 500 * time_multiplier,
     'tau_g_s_glut_1' : 1e4 * time_multiplier,
-    'tau_g_s_glut_2' : 5e3 * time_multiplier,
+    'tau_g_s_glut_2' : 1e4 * time_multiplier,
     #'tau_g_s_glut_2' : 1e15 * time_multiplier,
     'Ca_tgt' : 20,
     'g_l' : 0.02 * 0.628 * usiemens,
@@ -272,9 +272,9 @@ print(len(spikes_LP.spike_trains()[0]))
 print(len(spikes_PY.spike_trains()[0]))
 
 if TEST_RUN:
-    plot(trace_ABPD.t/ms, trace_ABPD[0].v/mV + 300, linewidth = 2, color = (0, 0.39216, 0.78431))
-    plot(trace_LP.t/ms, trace_LP[0].v/mV + 150, linewidth = 2, color = (0.90196, 0.1568, 0))
-    plot(trace_PY.t/ms, trace_PY[0].v/mV + 0, linewidth = 2, color = (0.23529, 0.58823, 0.31372))
+    plot(trace_ABPD.t/ms, trace_ABPD[0].v/mV + 300, linewidth = 3, color = (0, 0.39216, 0.78431))
+    plot(trace_LP.t/ms, trace_LP[0].v/mV + 150, linewidth = 3, color = (0.90196, 0.1568, 0))
+    plot(trace_PY.t/ms, trace_PY[0].v/mV + 0, linewidth = 3, color = (0.23529, 0.58823, 0.31372))
     xlabel('t (ms)')
     ylabel('v (mV)')
     show()
