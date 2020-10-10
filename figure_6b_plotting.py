@@ -39,7 +39,7 @@ plt.fill_between(shifts, mean_good - std_good, mean_good + std_good, alpha = 0.5
 sns.lineplot(x = shifts, y = mean_shifts, palette = "Set3", linewidth = 4, label = "Adjusted by\nShifted\nSurrogate")
 plt.fill_between(shifts, mean_shifts - std_shifts, mean_shifts + std_shifts, alpha = 0.5)
 
-plt.xlabel("shift")
+plt.xlabel("$\omega$")
 plt.ylabel("TE(nats/second)")
 plt.legend(bbox_to_anchor=(1.04,1), loc="upper left")
 

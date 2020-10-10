@@ -6,7 +6,7 @@ import plot_format
 
 plot_format.set_format()
 
-data_file = h5py.File("figure_6t.h5", "r")
+data_file = h5py.File("figure_6.h5", "r")
 
 key = "foo"
 TE_vals = data_file[key]["TE"].value
@@ -31,10 +31,10 @@ sns.lineplot(x = shifts, y = mean, palette = "Set3", linewidth = 4, label = "TE"
 plt.fill_between(shifts, mean - std, mean + std, alpha = 0.5)
 
 plt.legend(bbox_to_anchor=(1.04,1), loc="upper left")
-plt.xlabel("shift")
+plt.xlabel("$\omega$")
 plt.ylabel("TE(nats/second)")
 
 plt.tight_layout()
 #plt.show()
 
-plt.savefig("shifts_t.pdf", bbox_inches='tight', format = 'pdf')
+plt.savefig("shifts.pdf", bbox_inches='tight', format = 'pdf')
