@@ -144,12 +144,16 @@ function estimate_TE_discrete(
     end
 
     histogram_target = Dict()
-    if d_x > 10
+    if d_x > 10 && d_x < 20
         sizehint!(histogram_target, 2^(d_x + sum(d_c) - 3))
+    elseif d_x >= 20
+        sizehint!(histogram_target, Int(1e5))
     end
     histogram_joint = Dict()
-    if d_x + d_y > 10
+    if d_x + d_y > 10 && d_x + d_y < 20
         sizehint!(histogram_joint, 2^(d_x + sum(d_c) + d_y - 3))
+    elseif d_x + d_y >= 20
+        sizehint!(histogram_joint, Int(1e5))
     end
 
     for i = 1:size(discretised_target_events)[1]
@@ -206,6 +210,9 @@ function estimate_TE_discrete(
         end
     end
 
+    joint_histogram_freqs = collect(values(histogram_joint))
+    joint_histogram_keys = collect(keys(histogram_joint))
+
     log_p_given_joint = log_p_given_joint / (delta_t * size(discretised_target_events)[1])
 
     log_p_given_target = 0
@@ -229,7 +236,7 @@ function estimate_TE_discrete(
 
     log_p_given_target = log_p_given_target / (delta_t * size(discretised_target_events)[1])
 
-    return log_p_given_joint - log_p_given_target
+    return log_p_given_joint - log_p_given_target, joint_histogram_freqs, joint_histogram_keys
 
 end
 
