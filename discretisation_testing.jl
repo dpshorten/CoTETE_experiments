@@ -26,6 +26,7 @@ function estimate_TE_discrete(
     c_lag = 0,
     conditioning_events = [[]],
     d_c = [0],
+    permutation_surrogate = false,
 )
 
     target_events = deepcopy(target_events)
@@ -143,6 +144,34 @@ function estimate_TE_discrete(
         end
     end
 
+    if permutation_surrogate
+        hash_of_target_and_conditional = Dict()
+        for i = 1:size(discretised_target_events)[1]
+            ind = 1
+            for j = 1:(d_x+sum(d_c))
+                ind += target_history_representation[i, j] * 2^(j - 1)
+            end
+
+            if haskey(hash_of_target_and_conditional, ind)
+                push!(
+                    hash_of_target_and_conditional[ind],
+                    joint_history_representation[i, (d_x+sum(d_c)+1):(d_x+sum(d_c)+d_y)],
+                )
+            else
+                temp = joint_history_representation[i, (d_x+sum(d_c)+1):(d_x+sum(d_c)+d_y)]
+                hash_of_target_and_conditional[ind] = [temp]
+            end
+        end
+
+        for i = 1:size(joint_history_representation)[1]
+            ind = 1
+            for j = 1:(d_x+sum(d_c))
+                ind += target_history_representation[i, j] * 2^(j - 1)
+            end
+            joint_history_representation[i, (d_x+sum(d_c)+1):(d_x+sum(d_c)+d_y)] = hash_of_target_and_conditional[ind][rand(1:end)][:]
+        end
+    end
+
     histogram_target = Dict()
     if d_x > 10 && d_x < 20
         sizehint!(histogram_target, 2^(d_x + sum(d_c) - 3))
@@ -251,13 +280,14 @@ function find_lags_and_calc_TE(
     dy,
     d_c,
     y_lag_max,
-    c_lag_max,
+    c_lag_max;
+    permutation_surrogate = false
 )
 
     TE_at_c_lags = zeros(c_lag_max + 1)
     for c_lag = 0:c_lag_max
         TE_at_c_lags[c_lag+1] =
-            estimate_TE_discrete(target_events, conditioning_events, dt, dx, d_c, c_lag, d_c = 0)
+            estimate_TE_discrete(target_events, conditioning_events, dt, dx, d_c, c_lag, d_c = 0)[1]
     end
     #max_TE = maximum(TE_at_c_lags)
     chosen_c_lag = findmax(TE_at_c_lags)[2] - 1
@@ -275,7 +305,8 @@ function find_lags_and_calc_TE(
             c_lag = chosen_c_lag,
             conditioning_events = [conditioning_events],
             d_c = [d_c],
-        )
+            permutation_surrogate = permutation_surrogate
+        )[1]
     end
     #max_TE = maximum(TE_at_c_lags)
     return findmax(TE_at_y_lags)[1]

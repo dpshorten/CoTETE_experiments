@@ -1,13 +1,13 @@
 include("discretisation_testing.jl")
 
 
-REPEATS = 10
+REPEATS = 2
 
-NUM_SURROGATES = 100
-#NUM_SURROGATES = 20
+#NUM_SURROGATES = 100
+NUM_SURROGATES = 20
 START_OFFSET = 100
 #TARGET_TRAIN_LENGTHS = [Int(5e4)]
-TARGET_TRAIN_LENGTHS = [Int(2e3)]
+TARGET_TRAIN_LENGTHS = [Int(1e4)]
 MOTHER_NOISE_STD = 5e-2
 DAUGHTER_NOISE_STDS = [7.5e-2, 5e-2]
 MOTHER_T = 1
@@ -72,12 +72,13 @@ h5open(string("figure_7b.h5"), "w") do file
 
 
                     Threads.@threads for j = 1:NUM_SURROGATES
-                        source_events_surrogate = source_events .- 200 * (1 + rand())
-                        clamp!(source_events_surrogate, 0, 1e6)
+                        #source_events_surrogate = source_events .- 200 * (1 + rand())
+                        #clamp!(source_events_surrogate, 0, 1e6)
 
                         TE_surrogate = find_lags_and_calc_TE(
                             target_events[target_start_event:target_end_event],
-                            source_events_surrogate,
+                            #source_events_surrogate,
+                            source_events,
                             conditioning_events,
                             DT,
                             d_x,
@@ -85,6 +86,7 @@ h5open(string("figure_7b.h5"), "w") do file
                             d_c,
                             MAX_LAG,
                             MAX_LAG,
+                            permutation_surrogate = true,
                         )
 
                         surrogate_vals[j] = TE_surrogate
@@ -92,12 +94,12 @@ h5open(string("figure_7b.h5"), "w") do file
 
                     sort!(surrogate_vals)
                     println("TE ", TE)
-                    #println(
-                    #    "surrogate ",
-                    #    surrogate_vals[1],
-                    #    surrogate_vals[90],
-                    #    surrogate_vals[end],
-                    #)
+                    println(
+                        "surrogate ",
+                        surrogate_vals[1], " ",
+                        surrogate_vals[18], " ",
+                        surrogate_vals[end], " ",
+                    )
                     println(
                         "p ",
                         (searchsortedfirst(surrogate_vals, TE) - 1) / length(surrogate_vals),
