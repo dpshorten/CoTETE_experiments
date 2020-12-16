@@ -1,10 +1,10 @@
 include("discretisation_testing.jl")
 
 
+TARGET_TRAIN_LENGTHS = [100, 1000, Int(1e4), Int(1e5)]
 #TARGET_TRAIN_LENGTHS = [100, 1000, Int(1e4), Int(1e5), Int(1e6)]
-TARGET_TRAIN_LENGTHS = [100, 1000, Int(1e4), Int(1e5), Int(1e6)]
 REPETITIONS_PER_LENGTH = [1000, 100, 20, 20, 20]
-DT_VALS = [1.0, 0.5, 0.2, 0.1]
+DT_VALS = [1.0, 0.5, 0.3, 0.2, 0.1, 0.05]
 OFFSET = 200
 
 target_events = read(string("train_x_1.dat"))
@@ -47,7 +47,7 @@ h5open("figure_4c.h5", "w") do file
                     Int(round(1 / DT_VALS[l])),
                     Int(round(1 / DT_VALS[l])),
                     0,
-                )
+                )[1]
 
                 TE_vals[l, i, j] = TE
             end

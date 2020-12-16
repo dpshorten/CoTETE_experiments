@@ -4,11 +4,11 @@ include("discretisation_testing.jl")
 
 REPEATS = 10
 
-#NUM_SURROGATES = 100
-NUM_SURROGATES = 20
+NUM_SURROGATES = 100
+#NUM_SURROGATES = 20
 START_OFFSET = 100
-#TARGET_TRAIN_LENGTH = Int(5e4)
-TARGET_TRAIN_LENGTH = Int(2e3)
+TARGET_TRAIN_LENGTH = Int(5e4)
+#TARGET_TRAIN_LENGTH = Int(1e4)
 
 DT = 0.05
 #MAX_LAG = 20
@@ -66,12 +66,13 @@ h5open(string("figure_8d.h5"), "w") do file
             surrogate_vals = zeros(NUM_SURROGATES)
 
             Threads.@threads for j = 1:NUM_SURROGATES
-                source_events_surrogate = source_events .- 200 * (1 + rand())
-                clamp!(source_events_surrogate, 0, 1e6)
+                #source_events_surrogate = source_events .- 200 * (1 + rand())
+                #clamp!(source_events_surrogate, 0, 1e6)
 
                 TE_surrogate = find_lags_and_calc_TE(
                     target_events[target_start_event:target_end_event],
-                    source_events_surrogate,
+                    #source_events_surrogate,
+                    source_events,
                     conditioning_events,
                     DT,
                     d_x,
@@ -79,6 +80,7 @@ h5open(string("figure_8d.h5"), "w") do file
                     d_c,
                     MAX_LAG,
                     MAX_LAG,
+                    permutation_surrogate = true,
                 )
 
                 surrogate_vals[j] = TE_surrogate
@@ -86,7 +88,8 @@ h5open(string("figure_8d.h5"), "w") do file
 
             sort!(surrogate_vals)
             println("TE ", TE)
-            #println("surrogate ", surrogate_vals[1], surrogate_vals[90], surrogate_vals[end])
+            println("surrogate ", surrogate_vals[1], " ", surrogate_vals[18], " ",
+             surrogate_vals[end])
             println("p ", (searchsortedfirst(surrogate_vals, TE) - 1) / length(surrogate_vals))
             println()
 
