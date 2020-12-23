@@ -86,7 +86,7 @@ for k in range(len(OUTPUT_FILES)):
 
 
 
-
+    print(OUTPUT_FILES[k])
     make_heatmap("Excitatory true positive rate", OUTPUT_FILES[k] + "/cont_exc", exc_p)
     make_heatmap("Inhibitory true positive rate", OUTPUT_FILES[k] + "/cont_inh", inh_p)
     make_heatmap("False positive rate", OUTPUT_FILES[k] + "/cont_fake", fake_p)

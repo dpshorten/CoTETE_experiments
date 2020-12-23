@@ -4,7 +4,7 @@ include("discretisation_testing.jl")
 #TARGET_TRAIN_LENGTHS = [100, 1000, Int(1e4), Int(1e5), Int(1e6)]
 TARGET_TRAIN_LENGTHS = [100, 1000, Int(1e4)]
 REPETITIONS_PER_LENGTH = [1000, 100, 20, 20, 20]
-DT_VALS = [1.0, 0.5, 0.2, 0.1, 0.05, 0.02, 0.01, 0.005]
+DT_VALS = [1.0, 0.5, 0.3, 0.1, 0.05, 0.03, 0.01, 0.005]
 HISTOGRAM_OF_FREQS_UPPER = 10
 OFFSET = 200
 

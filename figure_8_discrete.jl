@@ -23,9 +23,9 @@ TARGET_TRAIN_LENGTHS = [Int(1e2), Int(5e2), Int(1e3), Int(2e3), Int(5e3), Int(1e
 
 NET_SIZES = [0, 1, 2]
 CONDITIONING_SIZE = [6, 12, 18]
-#EXTRA_TYPES = ["exc", "inh", "fake"]
+EXTRA_TYPES = ["exc", "inh", "fake"]
 #EXTRA_TYPES = ["fake_corr"]
-EXTRA_TYPES = ["fake"]
+#EXTRA_TYPES = ["fake"]
 
 NUM_SURROGATES = 100
 
@@ -76,17 +76,17 @@ h5open(string("uncorrelated_pop_discrete_unison_pairwise/run_", ARGS[1], ".h5"),
                     c_lag = 0,
                     #conditioning_events = array_of_conditioning_events,
                     #d_c = d_c,
-                )
+                )[1]
 
                 surrogate_vals = zeros(NUM_SURROGATES)
 
                 Threads.@threads for j = 1:NUM_SURROGATES
-                    surrogate_source_events = source_events .- 20 * (1 + rand())
-                    clamp!(surrogate_source_events, 0, 1e6)
+                    #surrogate_source_events = source_events .- 20 * (1 + rand())
+                    #clamp!(surrogate_source_events, 0, 1e6)
 
                     TE_surrogate = estimate_TE_discrete(
                         target_events[2:(target_length+2)],
-                        surrogate_source_events,
+                        source_events,
                         DT[net_size + 1],
                         d_x[net_size + 1],
                         d_y[net_size + 1],
@@ -94,7 +94,8 @@ h5open(string("uncorrelated_pop_discrete_unison_pairwise/run_", ARGS[1], ".h5"),
                         c_lag = 0,
                         #conditioning_events = array_of_conditioning_events,
                         #d_c = d_c,
-                    )
+                        permutation_surrogate = true,
+                    )[1]
 
 
                     surrogate_vals[j] = TE_surrogate
