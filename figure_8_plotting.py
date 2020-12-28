@@ -43,8 +43,8 @@ def make_heatmap(title, filename, p_vals):
     plt.yticks(ticks = np.flip(np.arange(3) + 0.5), labels = SIZES)
     plt.xlabel("num target spikes")
     plt.ylabel("num conditioning processes")
-    plt.savefig("figures/" + filename + ".pdf",
-                bbox_inches='tight', format = 'pdf')
+    plt.savefig("figures/" + filename + ".eps",
+                bbox_inches='tight', format = 'eps')
     plt.show()
 
 
