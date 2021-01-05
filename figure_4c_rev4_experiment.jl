@@ -18,8 +18,11 @@ source_events = source_events[:, 1]
 
 results_TE = []
 
-h5open("figure_4c_rev4-3.h5", "w") do file
+h5open("figure_4c_rev4-4.h5", "w") do file
     TE_vals =
+        -100 *
+        ones((length(DT_VALS), length(TARGET_TRAIN_LENGTHS), maximum(REPETITIONS_PER_LENGTH)))
+    surrogate_TE_vals =
         -100 *
         ones((length(DT_VALS), length(TARGET_TRAIN_LENGTHS), maximum(REPETITIONS_PER_LENGTH)))
     histogram_of_freqs =
@@ -63,6 +66,17 @@ h5open("figure_4c_rev4-3.h5", "w") do file
                         end
                     end
                 end
+
+                surrogate_source_events = source_events .- 20 * (1 + rand())
+                clamp!(surrogate_source_events, 0, 1e6)
+                surrogate_TE_vals[l, i, j] = estimate_TE_discrete(
+                    target_events[target_start_event:target_end_event],
+                    surrogate_source_events[source_start_event:source_end_event],
+                    DT_VALS[l],
+                    Int(round(1 / DT_VALS[l])),
+                    Int(round(1 / DT_VALS[l])),
+                    0,
+                )[1]
             end
         end
     end
@@ -73,6 +87,7 @@ h5open("figure_4c_rev4-3.h5", "w") do file
 
     g = g_create(file, "foo")
     g["TE"] = TE_vals
+    g["surrogate_TE"] = surrogate_TE_vals
     g["num_target_events"] = TARGET_TRAIN_LENGTHS
     g["dt"] = DT_VALS
     g["histogram_freqs"] = histogram_of_freqs
